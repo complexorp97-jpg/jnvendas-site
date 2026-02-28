@@ -1,221 +1,308 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>JN VENDAS</title>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(180deg,#140020,#2d004d,#4b0082);
-  color:white;
-  overflow-x:hidden;
-}
+  :root{ --neon:#b56bff; --neon2:#ff4dff; --bg1:#140022; --bg2:#2a0047; --bg3:#4d0099; }
+  body{ margin:0; font-family:Arial; background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3)); color:white; overflow-x:hidden; }
+  .snow{ position:fixed; top:-10px; width:6px;height:6px; background:var(--neon); border-radius:50%; opacity:.9; pointer-events:none; animation:fall linear forwards; z-index:1; box-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55); }
+  @keyframes fall{ to{ transform:translateY(120vh); } }
 
-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px;
-  background:rgba(0,0,0,0.3);
-  border-bottom:1px solid #b56bff;
-}
+  .topbar{ position:sticky; top:0; z-index:10; padding:12px 15px; display:flex; justify-content:space-between; align-items:center; gap:10px; background:rgba(0,0,0,.18); backdrop-filter:blur(8px); border-bottom:1px solid rgba(181,107,255,.45); }
+  .logo{ font-weight:1000; font-size:14px; letter-spacing:.6px; text-shadow:0 0 10px rgba(181,107,255,.8); white-space:nowrap; }
+  .actions{ display:flex; gap:10px; align-items:center; }
+  .pill,.iconBtn{ height:32px; border-radius:10px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); color:#fff; font-weight:1000; cursor:pointer; }
+  .pill{ padding:0 10px; }
+  .iconBtn{ width:32px; display:flex; align-items:center; justify-content:center; }
 
-.logo{
-  font-weight:bold;
-  font-size:14px;
-  text-shadow:0 0 10px #b56bff;
-}
+  .grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; padding:14px; position:relative; z-index:2; }
+  .card{ background:rgba(255,255,255,.03); border:1px solid rgba(181,107,255,.35); border-radius:18px; padding:10px; text-align:center; cursor:pointer; }
+  .thumb{ height:120px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-weight:1000; background:white; color:#2a0047; box-shadow:0 0 16px rgba(181,107,255,.35); letter-spacing:.7px; }
+  .card h3{ margin:10px 0 6px; font-size:13px; text-transform:uppercase; }
+  .old{ text-decoration:line-through; opacity:.65; font-weight:900; }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .new{ font-size:18px; font-weight:1000; color:var(--neon); text-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55); animation:blink 1s infinite; }
+  .btn{ margin-top:10px; width:100%; padding:8px; border-radius:10px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); color:white; font-weight:1000; cursor:pointer; }
 
-button{
-  cursor:pointer;
-  border:none;
-}
+  .modalBg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:99; }
+  .modalBg.show{ display:block; }
+  .modal{ width:min(520px, calc(100vw - 26px)); position:fixed; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:18px; border:1px solid rgba(181,107,255,.45); background:rgba(20,0,34,.92); backdrop-filter: blur(10px); padding:12px; }
+  .modalHead{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .closeBtn{ width:40px;height:40px;border-radius:12px;border:1px solid rgba(181,107,255,.45);background:rgba(255,255,255,.08);color:#fff;font-weight:1000;cursor:pointer;}
+  .input{ width:100%; height:44px; border-radius:14px; border:1px solid rgba(181,107,255,.45); background:rgba(255,255,255,.08); color:#fff; padding:0 12px; outline:none; font-weight:1000; }
+  .hint{ margin-top:8px; color:rgba(255,255,255,.75); font-size:12px; font-weight:800; }
 
-.produtos{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-  padding:15px;
-}
+  .cartList{ display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow:auto; }
+  .cartItem{ border:1px solid rgba(181,107,255,.30); background:rgba(255,255,255,.06); border-radius:14px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:10px; }
+  .miniBtns{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+  .miniBtn{ width:36px;height:36px;border-radius:12px;border:1px solid rgba(181,107,255,.45);background:rgba(255,255,255,.08);color:#fff;font-weight:1000;cursor:pointer; }
+  .removeBtn{ height:36px; padding:0 10px; border-radius:12px; border:1px solid rgba(255,77,255,.45); background:rgba(255,77,255,.12); color:#fff; font-weight:1000; cursor:pointer; }
 
-.card{
-  background:rgba(255,255,255,0.05);
-  padding:10px;
-  border-radius:15px;
-  text-align:center;
-  border:1px solid #b56bff55;
-}
-
-.preco{
-  font-size:18px;
-  font-weight:bold;
-  color:#ff4dff;
-  animation:piscando 1s infinite;
-}
-
-@keyframes piscando{
-  0%,100%{opacity:1;}
-  50%{opacity:0.3;}
-}
-
-.carrinho{
-  position:fixed;
-  bottom:0;
-  width:100%;
-  background:#200033;
-  padding:10px;
-  border-top:1px solid #b56bff;
-}
-
-.itemCarrinho{
-  display:flex;
-  justify-content:space-between;
-  margin:5px 0;
-}
-
-.total{
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.neve{
-  position:fixed;
-  top:-10px;
-  width:5px;
-  height:5px;
-  background:#b56bff;
-  border-radius:50%;
-  animation:cair linear infinite;
-}
-
-@keyframes cair{
-  to{ transform:translateY(100vh);}
-}
+  .totalRow{ margin-top:10px; border-top:1px solid rgba(181,107,255,.25); padding-top:10px; display:flex; justify-content:space-between; font-weight:1000; }
+  .pixGlow{ animation:glow 1s infinite; box-shadow:0 0 15px var(--neon), 0 0 30px var(--neon2); }
+  @keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.6);} }
 </style>
 </head>
-
 <body>
 
-<header>
+<div class="topbar">
   <div class="logo">🇧🇷 JN VENDAS</div>
-  <div>
-    🔍
-    🛒
+  <div class="actions">
+    <button class="pill" onclick="openLogin()">ENTRAR</button>
+    <button class="iconBtn" onclick="openSearch()">🔍</button>
+    <button class="iconBtn" onclick="openCart()">🛒</button>
   </div>
-</header>
+</div>
 
-<div class="produtos" id="listaProdutos"></div>
+<div id="list" class="grid"></div>
 
-<div class="carrinho">
-  <div id="itensCarrinho"></div>
-  <div class="total" id="total">Total: R$ 0</div>
-  <button onclick="finalizarCompra()">FINALIZAR</button>
+<!-- LOGIN GOOGLE -->
+<div class="modalBg" id="loginBg" onclick="closeLogin()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHead">
+      <b>🔐 Entrar com Google</b>
+      <button class="closeBtn" onclick="closeLogin()">✕</button>
+    </div>
+    <div id="gbtn"></div>
+    <div class="hint">Você precisa entrar pra receber a conta no e-mail.</div>
+  </div>
+</div>
+
+<!-- PESQUISA -->
+<div class="modalBg" id="searchBg" onclick="closeSearch()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHead">
+      <b>🔍 Pesquisar produto</b>
+      <button class="closeBtn" onclick="closeSearch()">✕</button>
+    </div>
+    <input class="input" id="searchInput" placeholder="Ex: BRP1, BRP2..." oninput="doSearch()">
+    <div class="hint">Digite: BRP1 / BRP2 / BRP3 / BRP4 / BRP5</div>
+  </div>
+</div>
+
+<!-- CARRINHO -->
+<div class="modalBg" id="cartBg" onclick="closeCart()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHead">
+      <b>🛒 Carrinho</b>
+      <button class="closeBtn" onclick="closeCart()">✕</button>
+    </div>
+
+    <div class="cartList" id="cartList"></div>
+
+    <div class="totalRow">
+      <span>Total</span>
+      <span id="cartTotal">R$ 0,00</span>
+    </div>
+
+    <button class="btn pixGlow" style="margin-top:12px" onclick="finalizarPix()">
+      💳 FINALIZAR NO PIX
+    </button>
+  </div>
 </div>
 
 <script>
-const API="https://jnvendas-bot.onrender.com";
+  // ====== COLOQUE SEU CLIENT ID DO GOOGLE ======
+  const GOOGLE_CLIENT_ID = "COLOQUE_SEU_CLIENT_ID_DO_GOOGLE";
 
-const produtos=[
-{id:"BRP1",preco:12},
-{id:"BRP2",preco:12},
-{id:"BRP3",preco:12},
-{id:"BRP4",preco:12},
-{id:"BRP5",preco:12}
-];
+  const produtos = [
+    { id:"brp1", tag:"BRP1", nome:"CONTAS BRP1", old:20, price:12 },
+    { id:"brp2", tag:"BRP2", nome:"CONTAS BRP2", old:20, price:12 },
+    { id:"brp3", tag:"BRP3", nome:"CONTAS BRP3", old:20, price:12 },
+    { id:"brp4", tag:"BRP4", nome:"CONTAS BRP4", old:20, price:12 },
+    { id:"brp5", tag:"BRP5", nome:"CONTAS BRP5", old:20, price:12 }
+  ];
 
-let carrinho={};
+  let filtered = [...produtos];
+  let cart = []; // [{id, qty}]
+  let userEmail = localStorage.getItem("userEmail") || "";
+  let userName = localStorage.getItem("userName") || "";
 
-function renderProdutos(){
-  const lista=document.getElementById("listaProdutos");
-  lista.innerHTML="";
-  produtos.forEach(p=>{
-    lista.innerHTML+=`
-    <div class="card">
-      <h3>${p.id}</h3>
-      <div class="preco">R$ ${p.preco}</div>
-      <button onclick="addCarrinho('${p.id}')">Comprar 🛒</button>
-    </div>
-    `;
-  });
-}
+  const fmt = (n)=> n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 
-function addCarrinho(id){
-  carrinho[id]=(carrinho[id]||0)+1;
-  atualizarCarrinho();
-}
+  // neve
+  function createSnow(){
+    const s=document.createElement("div");
+    s.className="snow";
+    s.style.left=Math.random()*100+"vw";
+    s.style.animationDuration=(Math.random()*4+4)+"s";
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),8000);
+  }
+  setInterval(createSnow,160);
 
-function atualizarCarrinho(){
-  const div=document.getElementById("itensCarrinho");
-  div.innerHTML="";
-  let total=0;
-
-  for(let id in carrinho){
-    let qtd=carrinho[id];
-    let preco=produtos.find(p=>p.id==id).preco;
-    total+=preco*qtd;
-
-    div.innerHTML+=`
-    <div class="itemCarrinho">
-      ${id} (${qtd})
-      <div>
-        <button onclick="mudarQtd('${id}',-1)">-</button>
-        <button onclick="mudarQtd('${id}',1)">+</button>
+  function render(){
+    document.getElementById("list").innerHTML = filtered.map(p=>`
+      <div class="card" onclick="addToCart('${p.id}',1)">
+        <div class="thumb">ROLEPLAY</div>
+        <h3>${p.nome}</h3>
+        <div class="old">${fmt(p.old)}</div>
+        <div class="new">${fmt(p.price)}</div>
+        <button class="btn" onclick="event.stopPropagation(); addToCart('${p.id}',1)">🛒 Comprar</button>
       </div>
-    </div>
-    `;
+    `).join("");
   }
 
-  document.getElementById("total").innerText="Total: R$ "+total;
-}
+  // ===== LOGIN GOOGLE =====
+  function openLogin(){
+    document.getElementById("loginBg").classList.add("show");
 
-function mudarQtd(id,valor){
-  carrinho[id]+=valor;
-  if(carrinho[id]<=0) delete carrinho[id];
-  atualizarCarrinho();
-}
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback: handleGoogleLogin
+    });
 
-async function finalizarCompra(){
-  let email=prompt("Digite seu email:");
-  if(!email) return;
-
-  let primeiroProduto=Object.keys(carrinho)[0];
-  if(!primeiroProduto){
-    alert("Carrinho vazio");
-    return;
+    document.getElementById("gbtn").innerHTML = "";
+    google.accounts.id.renderButton(document.getElementById("gbtn"), {
+      theme: "outline",
+      size: "large",
+      text: "continue_with",
+      shape: "pill",
+    });
   }
+  function closeLogin(){ document.getElementById("loginBg").classList.remove("show"); }
 
-  const res=await fetch(API+"/pagamento-aprovado",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      produto:primeiroProduto,
-      compradorEmail:email
+  function handleGoogleLogin(response){
+    fetch("/api/login-google", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ id_token: response.credential })
     })
-  });
-
-  if(res.ok){
-    alert("Enviado para seu email!");
-    carrinho={};
-    atualizarCarrinho();
-  }else{
-    alert("Erro ao enviar");
+    .then(r=>r.json())
+    .then(d=>{
+      if(!d.ok) return alert("Falha no login.");
+      userEmail = d.email;
+      userName = d.name;
+      localStorage.setItem("userEmail", userEmail);
+      localStorage.setItem("userName", userName);
+      alert("Logado: " + userEmail);
+      closeLogin();
+    })
+    .catch(()=> alert("Erro de conexão no login."));
   }
-}
 
-function criarNeve(){
-  const floco=document.createElement("div");
-  floco.classList.add("neve");
-  floco.style.left=Math.random()*100+"vw";
-  floco.style.animationDuration=Math.random()*3+2+"s";
-  document.body.appendChild(floco);
-  setTimeout(()=>floco.remove(),5000);
-}
-setInterval(criarNeve,200);
+  // ===== pesquisa =====
+  function openSearch(){
+    document.getElementById("searchBg").classList.add("show");
+    const inp=document.getElementById("searchInput");
+    inp.value=""; inp.focus();
+    filtered=[...produtos]; render();
+  }
+  function closeSearch(){ document.getElementById("searchBg").classList.remove("show"); }
+  function doSearch(){
+    const q=(document.getElementById("searchInput").value||"").trim().toUpperCase();
+    filtered = !q ? [...produtos] : produtos.filter(p=> p.tag.includes(q) || p.nome.toUpperCase().includes(q));
+    render();
+  }
 
-renderProdutos();
+  // ===== carrinho (+/-) =====
+  function cartAdd(id, q){
+    const it = cart.find(x=>x.id===id);
+    if(it) it.qty += q;
+    else cart.push({id, qty:q});
+  }
+  function cartMinus(id){
+    const it = cart.find(x=>x.id===id);
+    if(!it) return;
+    it.qty -= 1;
+    if(it.qty<=0) cart = cart.filter(x=>x.id!==id);
+    renderCart();
+  }
+  function cartPlus(id){
+    cartAdd(id,1);
+    renderCart();
+  }
+  function cartRemove(id){
+    cart = cart.filter(x=>x.id!==id);
+    renderCart();
+  }
+
+  function addToCart(id,q){
+    cartAdd(id,q);
+    openCart();
+  }
+
+  function openCart(){
+    renderCart();
+    document.getElementById("cartBg").classList.add("show");
+  }
+  function closeCart(){ document.getElementById("cartBg").classList.remove("show"); }
+
+  function renderCart(){
+    const box=document.getElementById("cartList");
+    if(cart.length===0){
+      box.innerHTML = `<div class="hint">Carrinho vazio.</div>`;
+      document.getElementById("cartTotal").innerText = fmt(0);
+      return;
+    }
+    let total=0;
+    box.innerHTML = cart.map(ci=>{
+      const p = produtos.find(x=>x.id===ci.id);
+      const sub = p.price * ci.qty;
+      total += sub;
+      return `
+        <div class="cartItem">
+          <div>
+            <b>${p.nome}</b>
+            <small>${ci.qty}x • Subtotal: ${fmt(sub)}</small>
+          </div>
+          <div class="miniBtns">
+            <button class="miniBtn" onclick="cartMinus('${ci.id}')">−</button>
+            <button class="miniBtn" onclick="cartPlus('${ci.id}')">+</button>
+            <button class="removeBtn" onclick="cartRemove('${ci.id}')">Remover</button>
+          </div>
+        </div>
+      `;
+    }).join("");
+    document.getElementById("cartTotal").innerText = fmt(total);
+  }
+
+  // ===== finalizar pix (cria pedido no bot) =====
+  async function finalizarPix(){
+    if(cart.length===0) return alert("Carrinho vazio.");
+
+    if(!userEmail){
+      alert("Você precisa ENTRAR com Google pra receber no e-mail.");
+      openLogin();
+      return;
+    }
+
+    try{
+      const res = await fetch("/api/create-order", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ cart, userEmail, userName })
+      });
+      const data = await res.json();
+      if(!data.ok) return alert("Erro criando pedido.");
+
+      window.open(data.pay_url, "_blank");
+      alert("Pagamento abriu. Após aprovar, você recebe no e-mail automaticamente ✅");
+    }catch{
+      alert("Erro de conexão no servidor.");
+    }
+  }
+
+  // expõe pro onclick
+  window.openLogin=openLogin;
+  window.closeLogin=closeLogin;
+  window.openSearch=openSearch;
+  window.closeSearch=closeSearch;
+  window.doSearch=doSearch;
+  window.openCart=openCart;
+  window.closeCart=closeCart;
+  window.addToCart=addToCart;
+  window.cartMinus=cartMinus;
+  window.cartPlus=cartPlus;
+  window.cartRemove=cartRemove;
+  window.finalizarPix=finalizarPix;
+
+  render();
 </script>
 
 </body>
