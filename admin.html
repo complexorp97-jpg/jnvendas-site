@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JN ADMIN</title>
+
+<style>
+body{
+  margin:0;
+  background:#0c0018;
+  color:#fff;
+  font-family:monospace;
+  padding:30px;
+}
+h1{
+  color:#b56bff;
+  text-shadow:0 0 15px #b56bff;
+}
+input{
+  padding:10px;
+  margin:5px;
+  background:#140022;
+  border:1px solid #b56bff;
+  color:#fff;
+  border-radius:8px;
+}
+button{
+  padding:10px 15px;
+  background:#b56bff;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.section{
+  margin-top:30px;
+  padding:15px;
+  background:#140022;
+  border:1px solid #b56bff;
+  border-radius:10px;
+}
+</style>
+</head>
+<body>
+
+<h1>🔑 JN ADMIN PANEL</h1>
+
+<div id="login">
+  <input id="user" placeholder="Usuário">
+  <input id="pass" type="password" placeholder="Senha">
+  <button onclick="login()">Entrar</button>
+</div>
+
+<div id="panel" style="display:none;">
+
+<div class="section">
+<h2>📊 Estatísticas</h2>
+<p>Total vendido: <span id="total"></span></p>
+<p>Total pedidos: <span id="pedidos"></span></p>
+<p>Total avaliações: <span id="aval"></span></p>
+</div>
+
+<button onclick="logout()" style="background:red;margin-top:20px;">Sair</button>
+
+</div>
+
+<script>
+
+function login(){
+  const u=document.getElementById("user").value;
+  const p=document.getElementById("pass").value;
+
+  if(u==="ezzjn" && p==="caramelo"){
+    document.getElementById("login").style.display="none";
+    document.getElementById("panel").style.display="block";
+    loadData();
+  }else{
+    alert("Acesso negado ❌");
+  }
+}
+
+function logout(){
+  location
