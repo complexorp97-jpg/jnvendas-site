@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JN VENDAS</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(180deg,#140020,#2d004d,#4b0082);
+  color:white;
+  overflow-x:hidden;
+}
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px;
+  background:rgba(0,0,0,0.3);
+  border-bottom:1px solid #b56bff;
+}
+
+.logo{
+  font-weight:bold;
+  font-size:14px;
+  text-shadow:0 0 10px #b56bff;
+}
+
+button{
+  cursor:pointer;
+  border:none;
+}
+
+.produtos{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  padding:15px;
+}
+
+.card{
+  background:rgba(255,255,255,0.05);
+  padding:10px;
+  border-radius:15px;
+  text-align:center;
+  border:1px solid #b56bff55;
+}
+
+.preco{
+  font-size:18px;
+  font-weight:bold;
+  color:#ff4dff;
+  animation:piscando 1s infinite;
+}
+
+@keyframes piscando{
+  0%,100%{opacity:1;}
+  50%{opacity:0.3;}
+}
+
+.carrinho{
+  position:fixed;
+  bottom:0;
+  width:100%;
+  background:#200033;
+  padding:10px;
+  border-top:1px solid #b56bff;
+}
+
+.itemCarrinho{
+  display:flex;
+  justify-content:space-between;
+  margin:5px 0;
+}
+
+.total{
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.neve{
+  position:fixed;
+  top:-10px;
+  width:5px;
+  height:5px;
+  background:#b56bff;
+  border-radius:50%;
+  animation:cair linear infinite;
+}
+
+@keyframes cair{
+  to{ transform:translateY(100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">🇧🇷 JN VENDAS</div>
+  <div>
+    🔍
+    🛒
+  </div>
+</header>
+
+<div class="produtos" id="listaProdutos"></div>
+
+<div class="carrinho">
+  <div id="itensCarrinho"></div>
+  <div class="total" id="total">Total: R$ 0</div>
+  <button onclick="finalizarCompra()">FINALIZAR</button>
+</div>
+
+<script>
+const API="https://jnvendas-bot.onrender.com";
+
+const produtos=[
+{id:"BRP1",preco:12},
+{id:"BRP2",preco:12},
+{id:"BRP3",preco:12},
+{id:"BRP4",preco:12},
+{id:"BRP5",preco:12}
+];
+
+let carrinho={};
+
+function renderProdutos(){
+  const lista=document.getElementById("listaProdutos");
+  lista.innerHTML="";
+  produtos.forEach(p=>{
+    lista.innerHTML+=`
+    <div class="card">
+      <h3>${p.id}</h3>
+      <div class="preco">R$ ${p.preco}</div>
+      <button onclick="addCarrinho('${p.id}')">Comprar 🛒</button>
+    </div>
+    `;
+  });
+}
+
+function addCarrinho(id){
+  carrinho[id]=(carrinho[id]||0)+1;
+  atualizarCarrinho();
+}
+
+function atualizarCarrinho(){
+  const div=document.getElementById("itensCarrinho");
+  div.innerHTML="";
+  let total=0;
+
+  for(let id in carrinho){
+    let qtd=carrinho[id];
+    let preco=produtos.find(p=>p.id==id).preco;
+    total+=preco*qtd;
+
+    div.innerHTML+=`
+    <div class="itemCarrinho">
+      ${id} (${qtd})
+      <div>
+        <button onclick="mudarQtd('${id}',-1)">-</button>
+        <button onclick="mudarQtd('${id}',1)">+</button>
+      </div>
+    </div>
+    `;
+  }
+
+  document.getElementById("total").innerText="Total: R$ "+total;
+}
+
+function mudarQtd(id,valor){
+  carrinho[id]+=valor;
+  if(carrinho[id]<=0) delete carrinho[id];
+  atualizarCarrinho();
+}
+
+async function finalizarCompra(){
+  let email=prompt("Digite seu email:");
+  if(!email) return;
+
+  let primeiroProduto=Object.keys(carrinho)[0];
+  if(!primeiroProduto){
+    alert("Carrinho vazio");
+    return;
+  }
+
+  const res=await fetch(API+"/pagamento-aprovado",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      produto:primeiroProduto,
+      compradorEmail:email
+    })
+  });
+
+  if(res.ok){
+    alert("Enviado para seu email!");
+    carrinho={};
+    atualizarCarrinho();
+  }else{
+    alert("Erro ao enviar");
+  }
+}
+
+function criarNeve(){
+  const floco=document.createElement("div");
+  floco.classList.add("neve");
+  floco.style.left=Math.random()*100+"vw";
+  floco.style.animationDuration=Math.random()*3+2+"s";
+  document.body.appendChild(floco);
+  setTimeout(()=>floco.remove(),5000);
+}
+setInterval(criarNeve,200);
+
+renderProdutos();
+</script>
+
+</body>
+</html>
