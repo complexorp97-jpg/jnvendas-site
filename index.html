@@ -1,177 +1,166 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>JN VENDAS</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JN VENDAS</title>
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:linear-gradient(180deg,#140022,#2a0047,#4d0099);
-  min-height:100vh;
-  color:white;
-  overflow-x:hidden;
-}
+  <style>
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family:Arial, sans-serif;
+      color:#fff;
+      overflow-x:hidden;
+      background:#140022;
+    }
 
-/* CHUVISCO ROXO */
-.rain{
-  position:fixed;
-  top:-20px;
-  width:3px;
-  height:18px;
-  background:linear-gradient(180deg,rgba(181,107,255,0),rgba(181,107,255,.95));
-  border-radius:999px;
-  animation:fall linear forwards;
-  z-index:0;
-}
-@keyframes fall{
-  to{transform:translateY(120vh);}
-}
+    /* FUNDO FIXO (evita faixas/bug de rolagem) */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      background:linear-gradient(180deg,#140022,#2a0047,#4d0099);
+      z-index:-2;
+    }
 
-.topbar{
-  position:sticky;
-  top:0;
-  padding:15px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:rgba(0,0,0,.3);
-  backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(181,107,255,.4);
-  z-index:10;
-}
+    /* CHUVISCO ROXO */
+    .rain{
+      position:fixed;
+      top:-20px;
+      width:3px;
+      height:18px;
+      background:linear-gradient(180deg,rgba(181,107,255,0),rgba(181,107,255,.95));
+      border-radius:999px;
+      animation:fall linear forwards;
+      pointer-events:none;
+      z-index:-1;
+    }
+    @keyframes fall{ to{ transform:translateY(120vh); } }
 
-.logo{
-  font-weight:900;
-  font-size:14px;
-  letter-spacing:.5px;
-}
+    .topbar{
+      position:sticky;
+      top:0;
+      padding:15px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:rgba(0,0,0,.28);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid rgba(181,107,255,.4);
+      z-index:10;
+    }
 
-.actions{
-  display:flex;
-  gap:10px;
-}
+    .logo{ font-weight:900; font-size:14px; letter-spacing:.5px; }
 
-.icon{
-  width:36px;
-  height:36px;
-  border-radius:10px;
-  border:1px solid rgba(181,107,255,.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:rgba(255,255,255,.08);
-  cursor:pointer;
-}
+    .actions{ display:flex; gap:10px; }
+    .icon{
+      width:36px;height:36px;
+      border-radius:10px;
+      border:1px solid rgba(181,107,255,.6);
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(255,255,255,.08);
+      cursor:pointer;
+      user-select:none;
+    }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-  padding:20px;
-  position:relative;
-  z-index:1;
-}
+    .wrap{ padding:18px; }
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:15px;
+    }
 
-.card{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(181,107,255,.3);
-  border-radius:15px;
-  padding:12px;
-  text-align:center;
-}
+    .card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(181,107,255,.3);
+      border-radius:15px;
+      padding:12px;
+      text-align:center;
+    }
 
-.thumb{
-  height:120px;
-  background:white;
-  color:#2a0047;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:900;
-  margin-bottom:10px;
-}
+    .thumb{
+      height:120px;
+      background:#fff;
+      color:#2a0047;
+      border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;
+      margin-bottom:10px;
+    }
 
-.old{
-  text-decoration:line-through;
-  opacity:.6;
-  font-weight:900;
-}
+    .old{ text-decoration:line-through; opacity:.6; font-weight:900; }
+    .price{ font-size:18px; font-weight:900; color:#b56bff; }
 
-.price{
-  font-size:18px;
-  font-weight:900;
-  color:#b56bff;
-}
+    .btn{
+      margin-top:10px;
+      padding:10px;
+      width:100%;
+      border-radius:10px;
+      border:1px solid rgba(181,107,255,.6);
+      background:rgba(255,255,255,.1);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+    }
 
-.btn{
-  margin-top:10px;
-  padding:8px;
-  width:100%;
-  border-radius:10px;
-  border:1px solid rgba(181,107,255,.6);
-  background:rgba(255,255,255,.1);
-  color:white;
-  font-weight:900;
-  cursor:pointer;
-}
-</style>
+    /* responsivo */
+    @media (max-width:360px){
+      .grid{ grid-template-columns:1fr; }
+    }
+  </style>
 </head>
 
 <body>
-
-<div class="topbar">
-  <div class="logo">🇧🇷 JN VENDAS</div>
-  <div class="actions">
-    <div class="icon">📥</div>
-    <div class="icon">🔍</div>
-    <div class="icon">🛒</div>
-  </div>
-</div>
-
-<div class="grid" id="products"></div>
-
-<script>
-
-const produtos = [
-  {nome:"CONTAS BRP1", old:20, price:12},
-  {nome:"CONTAS BRP2", old:20, price:12},
-  {nome:"CONTAS BRP3", old:20, price:12},
-  {nome:"CONTAS BRP4", old:20, price:12},
-  {nome:"CONTAS BRP5", old:20, price:12}
-];
-
-const container = document.getElementById("products");
-
-function render(){
-  container.innerHTML = produtos.map(p=>`
-    <div class="card">
-      <div class="thumb">ROLEPLAY</div>
-      <h4>${p.nome}</h4>
-      <div class="old">R$ ${p.old},00</div>
-      <div class="price">R$ ${p.price},00</div>
-      <button class="btn">Ver Produto</button>
+  <div class="topbar">
+    <div class="logo">🇧🇷 JN VENDAS</div>
+    <div class="actions">
+      <div class="icon" title="Compras">📥</div>
+      <div class="icon" title="Buscar">🔍</div>
+      <div class="icon" title="Carrinho">🛒</div>
     </div>
-  `).join("");
-}
+  </div>
 
-render();
+  <div class="wrap">
+    <div class="grid" id="products"></div>
+  </div>
 
-/* CHUVISCO */
-function createRain(){
-  const r=document.createElement("div");
-  r.className="rain";
-  r.style.left=Math.random()*100+"vw";
-  r.style.animationDuration=(Math.random()*2+2)+"s";
-  document.body.appendChild(r);
-  setTimeout(()=>r.remove(),5000);
-}
-setInterval(createRain,120);
+  <script>
+    // Produtos BRP1 ao BRP5
+    const produtos = [
+      {nome:"CONTAS BRP1", old:20, price:12},
+      {nome:"CONTAS BRP2", old:20, price:12},
+      {nome:"CONTAS BRP3", old:20, price:12},
+      {nome:"CONTAS BRP4", old:20, price:12},
+      {nome:"CONTAS BRP5", old:20, price:12},
+    ];
 
-</script>
+    const container = document.getElementById("products");
 
+    function render(){
+      container.innerHTML = produtos.map(p => `
+        <div class="card">
+          <div class="thumb">ROLEPLAY</div>
+          <div style="font-weight:900;margin:6px 0 2px;">${p.nome}</div>
+          <div class="old">R$ ${p.old},00</div>
+          <div class="price">R$ ${p.price},00</div>
+          <button class="btn" type="button">Ver Produto</button>
+        </div>
+      `).join("");
+    }
+
+    render();
+
+    // Chuvisco roxo
+    function createRain(){
+      const r = document.createElement("div");
+      r.className = "rain";
+      r.style.left = (Math.random()*100) + "vw";
+      r.style.animationDuration = (Math.random()*2 + 2) + "s";
+      document.body.appendChild(r);
+      setTimeout(() => r.remove(), 6000);
+    }
+    setInterval(createRain, 120);
+  </script>
 </body>
 </html>
