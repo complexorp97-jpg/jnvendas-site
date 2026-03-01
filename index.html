@@ -1,511 +1,404 @@
 <!doctype html>
 <html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>JN VENDAS</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JN VENDAS</title>
 
-  <style>
-    :root{
-      --neon:#b56bff; --neon2:#ff4dff;
-      --bg1:#140022; --bg2:#2a0047; --bg3:#4d0099;
-      --card:rgba(255,255,255,.05);
-      --border:rgba(181,107,255,.35);
-    }
-    *{ box-sizing:border-box; }
-    body{
-      margin:0;
-      font-family:Arial, sans-serif;
-      color:#fff;
-      background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
-      overflow-x:hidden;
-    }
+<style>
+  :root{
+    --neon:#b56bff; --neon2:#ff4dff;
+    --bg1:#140022; --bg2:#2a0047; --bg3:#4d0099;
+  }
+  *{box-sizing:border-box}
+  body{ margin:0; font-family:Arial; background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3)); color:white; overflow-x:hidden; }
 
-    /* 🌧️ chuvisco roxo */
-    .drizzle{
-      position:fixed;
-      top:-10px;
-      width:3px;
-      height:10px;
-      background:linear-gradient(180deg, rgba(181,107,255,.0), rgba(181,107,255,.9));
-      border-radius:999px;
-      opacity:.9;
-      pointer-events:none;
-      animation:fall linear forwards;
-      z-index:1;
-      box-shadow:0 0 10px rgba(181,107,255,.65), 0 0 18px rgba(255,77,255,.25);
-    }
-    @keyframes fall{ to{ transform:translateY(120vh); } }
+  /* chuvisco roxo */
+  .drip{
+    position:fixed; top:-12vh; width:3px; height:14px;
+    background:linear-gradient(180deg, rgba(181,107,255,0), rgba(181,107,255,.95));
+    border-radius:999px; opacity:.85; pointer-events:none; z-index:1;
+    animation:fall linear forwards;
+    filter:drop-shadow(0 0 10px rgba(181,107,255,.35));
+  }
+  @keyframes fall{ to{ transform:translateY(120vh); } }
 
-    .topbar{
-      position:sticky; top:0; z-index:10;
-      padding:12px 15px;
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      background:rgba(0,0,0,.18);
-      backdrop-filter:blur(8px);
-      border-bottom:1px solid rgba(181,107,255,.45);
-    }
-    .logo{
-      display:flex; align-items:center; gap:10px;
-      font-weight:1000; font-size:14px; letter-spacing:.6px;
-      text-shadow:0 0 10px rgba(181,107,255,.8);
-      white-space:nowrap;
-    }
-    .actions{ display:flex; gap:10px; align-items:center; }
-    .pill,.iconBtn{
-      height:32px;
-      border-radius:10px;
-      border:1px solid rgba(181,107,255,.55);
-      background:rgba(255,255,255,.08);
-      color:#fff;
-      font-weight:1000;
-      cursor:pointer;
-    }
-    .pill{ padding:0 10px; }
-    .iconBtn{ width:32px; display:flex; align-items:center; justify-content:center; }
+  .topbar{
+    position:sticky; top:0; z-index:10;
+    padding:12px 15px; display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background:rgba(0,0,0,.18); backdrop-filter:blur(8px);
+    border-bottom:1px solid rgba(181,107,255,.45);
+  }
+  .logo{ font-weight:1000; font-size:14px; letter-spacing:.6px; text-shadow:0 0 10px rgba(181,107,255,.8); white-space:nowrap; }
+  .actions{ display:flex; gap:10px; align-items:center; }
+  .pill,.iconBtn{
+    height:32px; border-radius:10px;
+    border:1px solid rgba(181,107,255,.55);
+    background:rgba(255,255,255,.08);
+    color:#fff; font-weight:1000; cursor:pointer;
+  }
+  .pill{ padding:0 10px; }
+  .iconBtn{ width:32px; display:flex; align-items:center; justify-content:center; text-decoration:none; }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(2,1fr);
-      gap:14px;
-      padding:14px;
-      position:relative;
-      z-index:2;
-    }
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:18px;
-      padding:10px;
-      text-align:center;
-      cursor:pointer;
-      box-shadow:0 0 18px rgba(181,107,255,.15);
-    }
-    .thumb{
-      height:120px;
-      border-radius:14px;
-      display:flex; align-items:center; justify-content:center;
-      font-weight:1000;
-      background:white;
-      color:#2a0047;
-      box-shadow:0 0 16px rgba(181,107,255,.35);
-      letter-spacing:.7px;
-      user-select:none;
-    }
-    .card h3{ margin:10px 0 6px; font-size:13px; text-transform:uppercase; }
-    .old{ text-decoration:line-through; opacity:.65; font-weight:900; }
-    @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
-    .new{
-      font-size:18px; font-weight:1000;
-      color:var(--neon);
-      text-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55);
-      animation:blink 1s infinite;
-    }
-    .btn{
-      margin-top:10px;
-      width:100%;
-      padding:8px;
-      border-radius:10px;
-      border:1px solid rgba(181,107,255,.55);
-      background:rgba(255,255,255,.08);
-      color:white;
-      font-weight:1000;
-      cursor:pointer;
-    }
+  .grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; padding:14px; position:relative; z-index:2; }
+  @media(max-width:520px){ .grid{grid-template-columns:1fr;} }
 
-    .modalBg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:99; }
-    .modalBg.show{ display:block; }
-    .modal{
-      width:min(520px, calc(100vw - 26px));
-      position:fixed;
-      left:50%; top:50%;
-      transform:translate(-50%,-50%);
-      border-radius:18px;
-      border:1px solid rgba(181,107,255,.45);
-      background:rgba(20,0,34,.92);
-      backdrop-filter: blur(10px);
-      padding:12px;
-    }
-    .modalHead{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-    .closeBtn{
-      width:40px;height:40px;border-radius:12px;
-      border:1px solid rgba(181,107,255,.45);
-      background:rgba(255,255,255,.08);
-      color:#fff;font-weight:1000;cursor:pointer;
-    }
-    .input{
-      width:100%; height:44px;
-      border-radius:14px;
-      border:1px solid rgba(181,107,255,.45);
-      background:rgba(255,255,255,.08);
-      color:#fff; padding:0 12px;
-      outline:none; font-weight:1000;
-    }
-    .hint{ margin-top:8px; color:rgba(255,255,255,.75); font-size:12px; font-weight:800; }
+  .card{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(181,107,255,.35);
+    border-radius:18px; padding:10px; text-align:center;
+    box-shadow:0 0 20px rgba(181,107,255,.12);
+  }
+  .thumb{
+    height:120px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:1000; background:white; color:#2a0047;
+    box-shadow:0 0 16px rgba(181,107,255,.35);
+    letter-spacing:.7px;
+  }
+  .card h3{ margin:10px 0 6px; font-size:13px; text-transform:uppercase; }
+  .old{ text-decoration:line-through; opacity:.65; font-weight:900; }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .new{
+    font-size:18px; font-weight:1000; color:var(--neon);
+    text-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55);
+    animation:blink 1s infinite;
+  }
+  .btn{
+    margin-top:10px; width:100%; padding:8px; border-radius:10px;
+    border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08);
+    color:white; font-weight:1000; cursor:pointer;
+  }
 
-    .cartList{ display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow:auto; }
-    .cartItem{
-      border:1px solid rgba(181,107,255,.30);
-      background:rgba(255,255,255,.06);
-      border-radius:14px;
-      padding:10px;
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-    }
-    .miniBtns{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
-    .miniBtn{
-      width:36px;height:36px;border-radius:12px;
-      border:1px solid rgba(181,107,255,.45);
-      background:rgba(255,255,255,.08);
-      color:#fff;font-weight:1000;cursor:pointer;
-    }
-    .removeBtn{
-      height:36px; padding:0 10px; border-radius:12px;
-      border:1px solid rgba(255,77,255,.45);
-      background:rgba(255,77,255,.12);
-      color:#fff; font-weight:1000; cursor:pointer;
-    }
-    .totalRow{ margin-top:10px; border-top:1px solid rgba(181,107,255,.25); padding-top:10px; display:flex; justify-content:space-between; font-weight:1000; }
+  /* Modal base */
+  .modalBg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:99; }
+  .modalBg.show{ display:block; }
+  .modal{
+    width:min(520px, calc(100vw - 26px));
+    position:fixed; left:50%; top:50%;
+    transform:translate(-50%,-50%);
+    border-radius:18px;
+    border:1px solid rgba(181,107,255,.45);
+    background:rgba(20,0,34,.92);
+    backdrop-filter: blur(10px);
+    padding:12px;
+  }
+  .modalHead{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
+  .closeBtn{
+    width:40px;height:40px;border-radius:12px;border:1px solid rgba(181,107,255,.45);
+    background:rgba(255,255,255,.08);color:#fff;font-weight:1000;cursor:pointer;
+  }
+  .input{
+    width:100%; height:44px; border-radius:14px; border:1px solid rgba(181,107,255,.45);
+    background:rgba(255,255,255,.08); color:#fff; padding:0 12px; outline:none; font-weight:1000;
+  }
+  .hint{ margin-top:8px; color:rgba(255,255,255,.75); font-size:12px; font-weight:800; }
 
-    /* PIX */
-    .pixGlow{ animation:glow 1s infinite; box-shadow:0 0 15px var(--neon), 0 0 30px var(--neon2); }
-    @keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.55);} }
+  /* Drawer 📥 */
+  .drawer{
+    position:fixed; top:0; right:-420px; height:100vh; width:min(420px, 92vw);
+    background:rgba(20,0,34,.96);
+    border-left:1px solid rgba(181,107,255,.35);
+    z-index:120;
+    transition:right .25s ease;
+    box-shadow:-20px 0 50px rgba(0,0,0,.55);
+    display:flex; flex-direction:column;
+  }
+  .drawer.open{ right:0; }
+  .drawerHead{
+    padding:12px 14px;
+    display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(181,107,255,.25);
+  }
+  .drawerBody{ padding:14px; overflow:auto; }
+  .buyCard{
+    border:1px solid rgba(181,107,255,.28);
+    background:rgba(255,255,255,.05);
+    border-radius:16px;
+    padding:12px;
+    margin-bottom:12px;
+  }
+  .buyCard h4{ margin:0 0 8px; }
+  .reveal{ width:100%; padding:10px; border-radius:12px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); color:#fff; font-weight:1000; cursor:pointer; }
+  .reveal[disabled]{ opacity:.45; cursor:not-allowed; }
+  .codeBox{
+    display:none;
+    margin-top:10px;
+    padding:10px;
+    border-radius:12px;
+    border:1px solid rgba(181,107,255,.25);
+    background:rgba(0,0,0,.25);
+    font-family:monospace;
+    font-size:12px;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
 
-    /* detalhes */
-    .descBox{
-      margin-top:10px;
-      border:1px solid rgba(181,107,255,.25);
-      background:rgba(255,255,255,.06);
-      border-radius:14px;
-      padding:8px 10px;
-      line-height:1.35;
-      font-weight:900;
-      opacity:.95;
-      font-size:12px; /* menor */
-    }
-    .tagRow{
-      display:flex; justify-content:space-between; align-items:center; gap:10px;
-      margin-top:10px;
-      font-weight:1000;
-      opacity:.95;
-      font-size:12px;
-    }
-    .centerNote{
-      text-align:center;
-      margin:6px 14px 16px;
-      padding:8px 0;  /* sem borda */
-      opacity:.75;
-      font-weight:900;
-      position:relative;
-      z-index:2;
-    }
+  /* WhatsApp icon (logo “original” em SVG) */
+  .waIcon{ width:18px; height:18px; display:block; }
 
-    @media (min-width:540px){
-      .grid{ grid-template-columns:repeat(3,1fr); }
-    }
-  </style>
+  .footerNote{
+    text-align:center;
+    opacity:.55;
+    font-size:12px;
+    margin: 8px 0 20px;
+    position:relative; z-index:2;
+  }
+</style>
 </head>
+
 <body>
 
-  <div class="topbar">
-    <div class="logo">🇧🇷 JN VENDAS</div>
-    <div class="actions">
-      <button class="pill" onclick="openLogin()">ENTRAR</button>
-      <button class="iconBtn" title="Pesquisar" onclick="openSearch()">🔍</button>
-      <button class="iconBtn" title="WhatsApp" onclick="openWhatsapp()" aria-label="WhatsApp">
-        <!-- ícone simples -->
-        🟢
-      </button>
-      <button class="iconBtn" title="Carrinho" onclick="openCart()">🛒</button>
-    </div>
+<div class="topbar">
+  <div class="logo">🇧🇷 JN VENDAS</div>
+  <div class="actions">
+
+    <!-- WhatsApp -->
+    <a class="iconBtn" id="waBtn" title="WhatsApp" aria-label="WhatsApp" target="_blank" rel="noopener">
+      <svg class="waIcon" viewBox="0 0 32 32" aria-hidden="true">
+        <path fill="#25D366" d="M19.1 17.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.2-1.2-.4-2.3-1.4-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.6-.1-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.7 5.9 5.2.8.3 1.4.5 1.9.6.8.2 1.5.2 2.1.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4-.1-.2-.3-.2-.6-.4z"/>
+        <path fill="#25D366" d="M27.4 4.6C24.6 1.8 20.9.3 17 .3 9 .3 2.6 6.7 2.6 14.7c0 2.5.7 5 2.1 7.1L3.3 30l8.4-1.3c2 .9 4.2 1.4 6.4 1.4 8 0 14.4-6.5 14.4-14.4 0-3.9-1.5-7.6-4.2-10.3zm-10.4 23c-2.1 0-4.1-.5-5.9-1.5l-.4-.2-5  .8.8-4.9-.2-.5c-1.2-1.9-1.8-4.1-1.8-6.3 0-6.6 5.4-12 12-12 3.2 0 6.2 1.2 8.5 3.5 2.3 2.3 3.5 5.3 3.5 8.5 0 6.6-5.4 12.1-12 12.1z"/>
+      </svg>
+    </a>
+
+    <!-- 📥 Compras -->
+    <button class="iconBtn" onclick="openDrawer()">📥</button>
+
+    <!-- Carrinho -->
+    <button class="iconBtn" onclick="openCart()">🛒</button>
   </div>
+</div>
 
-  <div id="list" class="grid"></div>
+<div id="list" class="grid"></div>
+<div class="footerNote">Toque no 📥 para ver compras após a entrega por link.</div>
 
-  <!-- texto centralizado abaixo do último produto -->
-  <div class="centerNote">© <span id="year"></span></div>
-  <div class="centerNote" style="margin-top:6px;">📦 Já tem o link? <a href="entrega.html" style="color:#b56bff; font-weight:1000; text-decoration:none;">Abrir entrega</a></div>
-
-  <!-- LOGIN (só visual — você pode ligar com Google depois se quiser) -->
-  <div class="modalBg" id="loginBg" onclick="closeLogin()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <b>🔐 Entrar</b>
-        <button class="closeBtn" onclick="closeLogin()">✕</button>
-      </div>
-      <div class="hint">Login é opcional. Pra comprar, só precisa colocar o e-mail.</div>
+<!-- CARRINHO -->
+<div class="modalBg" id="cartBg" onclick="closeCart()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modalHead">
+      <b>🛒 Carrinho</b>
+      <button class="closeBtn" onclick="closeCart()">✕</button>
     </div>
-  </div>
 
-  <!-- PESQUISA -->
-  <div class="modalBg" id="searchBg" onclick="closeSearch()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <b>🔍 Pesquisar produto</b>
-        <button class="closeBtn" onclick="closeSearch()">✕</button>
-      </div>
-      <input class="input" id="searchInput" placeholder="Ex: BRP1, BRP2..." oninput="doSearch()" />
-      <div class="hint">Digite: BRP1 / BRP2 / BRP3 / BRP4 / BRP5</div>
+    <div id="cartList"></div>
+
+    <div style="margin-top:10px">
+      <input class="input" id="buyerEmail" placeholder="Seu e-mail (pra receber o link)" inputmode="email">
+      <div class="hint">Após aprovar pagamento, você recebe o link de entrega no e-mail.</div>
     </div>
+
+    <button class="btn" style="margin-top:12px" onclick="pagar()">
+      PIX (link Mercado Pago)
+    </button>
+
+    <div class="hint" id="status"></div>
   </div>
+</div>
 
-  <!-- CARRINHO -->
-  <div class="modalBg" id="cartBg" onclick="closeCart()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <b>🛒 Carrinho</b>
-        <button class="closeBtn" onclick="closeCart()">✕</button>
-      </div>
-
-      <div class="cartList" id="cartList"></div>
-
-      <div class="totalRow">
-        <span>Total</span>
-        <span id="cartTotal">R$ 0,00</span>
-      </div>
-
-      <div style="margin-top:10px">
-        <input class="input" id="buyerEmail" placeholder="Seu e-mail (pra receber a conta)" />
-        <div class="hint">📩 Você recebe a conta no e-mail após confirmar o pagamento.</div>
-      </div>
-
-      <button class="btn pixGlow" style="margin-top:12px" onclick="finalizarPix()">
-        🟣 PAGAR NO PIX
-      </button>
-
-      <div class="hint" id="payHint" style="display:none;margin-top:10px;">⏳ Processando pagamento...</div>
-    </div>
+<!-- DRAWER COMPRAS -->
+<div class="drawer" id="drawer">
+  <div class="drawerHead">
+    <b>📥 Minhas compras</b>
+    <button class="closeBtn" onclick="closeDrawer()">✕</button>
   </div>
+  <div class="drawerBody" id="drawerBody"></div>
+</div>
 
-  <!-- DETALHES -->
-  <div class="modalBg" id="detailBg" onclick="closeDetail()">
-    <div class="modal" onclick="event.stopPropagation()">
-      <div class="modalHead">
-        <b id="detailTitle">📦 Produto</b>
-        <button class="closeBtn" onclick="closeDetail()">✕</button>
+<script>
+  // ========= CONFIG =========
+  const API_BASE = "https://jnvendas-bot.onrender.com";
+
+  // WhatsApp link (troque pelo seu)
+  const WHATSAPP_LINK = "https://chat.whatsapp.com/H1Q6IzfX11kC68TYXcr2Co?mode=gi_t";
+  document.getElementById("waBtn").href = WHATSAPP_LINK;
+
+  const produtos = [
+    { id:"BRP1", nome:"CONTAS BRP1", old:20, price:12 },
+    { id:"BRP2", nome:"CONTAS BRP2", old:20, price:12 },
+    { id:"BRP3", nome:"CONTAS BRP3", old:20, price:12 },
+    { id:"BRP4", nome:"CONTAS BRP4", old:20, price:12 },
+    { id:"BRP5", nome:"CONTAS BRP5", old:20, price:12 }
+  ];
+
+  // carrinho simples (1 item por vez)
+  let cart = []; // [{id, qty}]
+  const fmt = (n)=> n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+
+  // chuvisco
+  function drip(){
+    const d=document.createElement("div");
+    d.className="drip";
+    d.style.left=Math.random()*100+"vw";
+    d.style.animationDuration=(Math.random()*3+2.8)+"s";
+    d.style.width=(Math.random()*2+2)+"px";
+    d.style.height=(Math.random()*14+8)+"px";
+    d.style.opacity=(Math.random()*.35+.5);
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(), 6500);
+  }
+  setInterval(drip, 120);
+
+  function render(){
+    document.getElementById("list").innerHTML = produtos.map(p=>`
+      <div class="card">
+        <div class="thumb">ROLEPLAY</div>
+        <h3>${p.nome}</h3>
+        <div class="old">${fmt(p.old)}</div>
+        <div class="new">${fmt(p.price)}</div>
+        <button class="btn" onclick="addToCart('${p.id}',1)">🛒 Comprar</button>
       </div>
+    `).join("");
+  }
 
-      <div class="thumb" style="height:150px;margin-bottom:10px">ROLEPLAY</div>
+  function openCart(){ document.getElementById("cartBg").classList.add("show"); renderCart(); }
+  function closeCart(){ document.getElementById("cartBg").classList.remove("show"); document.getElementById("status").innerText=""; }
 
-      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-        <div>
-          <div class="old" id="detailOld"></div>
-          <div class="new" id="detailPrice"></div>
-        </div>
-        <!-- sem estrelas aqui (você pediu pra tirar na parte de descrição/detalhes) -->
-        <div class="tagRow">
-          <span id="detailStock"></span>
-        </div>
-      </div>
+  function addToCart(id,q){
+    const it = cart.find(x=>x.id===id);
+    if(it) it.qty += q;
+    else cart.push({id, qty:q});
+    openCart();
+  }
 
-      <div class="descBox" id="detailDesc"></div>
-
-      <div style="margin-top:12px; display:flex; gap:10px;">
-        <button class="btn" style="width:40%;" onclick="closeDetail()">← Voltar</button>
-        <button class="btn" style="width:60%;" onclick="detailAddToCart()">🛒 Adicionar</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ✅ Seu bot (Render)
-    const API_BASE = "https://jnvendas-bot.onrender.com";
-
-    const produtos = [
-      { id:"BRP1", tag:"BRP1", nome:"CONTA BRP 1 🎮", old:20, price:12, stock:2 },
-      { id:"BRP2", tag:"BRP2", nome:"CONTA BRP 2 🎮", old:20, price:12, stock:2 },
-      { id:"BRP3", tag:"BRP3", nome:"CONTA BRP 3 🎮", old:20, price:12, stock:2 },
-      { id:"BRP4", tag:"BRP4", nome:"CONTA BRP 4 🎮", old:20, price:12, stock:2 },
-      { id:"BRP5", tag:"BRP5", nome:"CONTA BRP 5 🎮", old:20, price:12, stock:2 }
-    ];
-
-    // descrição menor + emojis
-    const DESC_LINES = [
-      "⏱️ 10HRS com autorização",
-      "💬 Discord",
-      "🔒 0/3"
-    ];
-
-    let filtered = [...produtos];
-    let cart = []; // [{id, qty}]
-    let currentProductId = null;
-
-    const fmt = (n)=> n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-
-    // 🌧️ chuvisco
-    function createDrizzle(){
-      const d=document.createElement("div");
-      d.className="drizzle";
-      d.style.left=Math.random()*100+"vw";
-      d.style.animationDuration=(Math.random()*3+3)+"s";
-      d.style.opacity = (Math.random()*0.35 + 0.55).toFixed(2);
-      document.body.appendChild(d);
-      setTimeout(()=>d.remove(),6500);
+  function renderCart(){
+    const box=document.getElementById("cartList");
+    if(cart.length===0){
+      box.innerHTML = `<div class="hint">Carrinho vazio.</div>`;
+      return;
     }
-    setInterval(createDrizzle,90);
-
-    function render(){
-      document.getElementById("list").innerHTML = filtered.map(p=>`
-        <div class="card" onclick="openDetail('${p.id}')">
-          <div class="thumb">ROLEPLAY</div>
-          <h3>${p.nome}</h3>
-          <div class="old">${fmt(p.old)}</div>
-          <div class="new">${fmt(p.price)}</div>
-          <button class="btn" onclick="event.stopPropagation(); openDetail('${p.id}')">Ver produto</button>
-        </div>
-      `).join("");
-    }
-
-    // ===== Detalhes =====
-    function openDetail(id){
-      const p = produtos.find(x=>x.id===id);
-      if(!p) return;
-      currentProductId = id;
-
-      document.getElementById("detailTitle").innerText = "📦 " + p.nome;
-      document.getElementById("detailOld").innerText = fmt(p.old);
-      document.getElementById("detailPrice").innerText = fmt(p.price);
-      document.getElementById("detailStock").innerText = `📦 ${p.stock} disponível`;
-
-      document.getElementById("detailDesc").innerHTML =
-        DESC_LINES.map(t => `• ${t}`).join("<br>");
-
-      document.getElementById("detailBg").classList.add("show");
-    }
-    function closeDetail(){ document.getElementById("detailBg").classList.remove("show"); }
-    function detailAddToCart(){
-      if(!currentProductId) return;
-      cartAdd(currentProductId, 1);
-      closeDetail();
-      openCart();
-    }
-
-    // ===== Login (visual) =====
-    function openLogin(){ document.getElementById("loginBg").classList.add("show"); }
-    function closeLogin(){ document.getElementById("loginBg").classList.remove("show"); }
-
-    // ===== WhatsApp =====
-    function openWhatsapp(){
-      window.open("https://chat.whatsapp.com/H1Q6IzfX11kC68TYXcr2Co?mode=gi_t", "_blank");
-    }
-
-    // ===== pesquisa =====
-    function openSearch(){
-      document.getElementById("searchBg").classList.add("show");
-      const inp=document.getElementById("searchInput");
-      inp.value=""; inp.focus();
-      filtered=[...produtos]; render();
-    }
-    function closeSearch(){ document.getElementById("searchBg").classList.remove("show"); }
-    function doSearch(){
-      const q=(document.getElementById("searchInput").value||"").trim().toUpperCase();
-      filtered = !q ? [...produtos] : produtos.filter(p=> p.tag.includes(q) || p.nome.toUpperCase().includes(q));
-      render();
-    }
-
-    // ===== carrinho =====
-    function cartAdd(id, q){
-      const it = cart.find(x=>x.id===id);
-      if(it) it.qty += q;
-      else cart.push({id, qty:q});
-    }
-    function cartMinus(id){
-      const it = cart.find(x=>x.id===id);
-      if(!it) return;
-      it.qty -= 1;
-      if(it.qty<=0) cart = cart.filter(x=>x.id!==id);
-      renderCart();
-    }
-    function cartPlus(id){ cartAdd(id,1); renderCart(); }
-    function cartRemove(id){ cart = cart.filter(x=>x.id!==id); renderCart(); }
-
-    function openCart(){ renderCart(); document.getElementById("cartBg").classList.add("show"); }
-    function closeCart(){ document.getElementById("cartBg").classList.remove("show"); }
-
-    function renderCart(){
-      const box=document.getElementById("cartList");
-      if(cart.length===0){
-        box.innerHTML = `<div class="hint">Carrinho vazio.</div>`;
-        document.getElementById("cartTotal").innerText = fmt(0);
-        return;
-      }
-      let total=0;
-      box.innerHTML = cart.map(ci=>{
-        const p = produtos.find(x=>x.id===ci.id);
-        const sub = p.price * ci.qty;
-        total += sub;
-        return `
-          <div class="cartItem">
-            <div>
-              <b>${p.nome}</b><br/>
-              <small>${ci.qty}x • Subtotal: ${fmt(sub)}</small>
-            </div>
-            <div class="miniBtns">
-              <button class="miniBtn" onclick="cartMinus('${ci.id}')">−</button>
-              <button class="miniBtn" onclick="cartPlus('${ci.id}')">+</button>
-              <button class="removeBtn" onclick="cartRemove('${ci.id}')">Remover</button>
-            </div>
+    let total=0;
+    box.innerHTML = cart.map(ci=>{
+      const p = produtos.find(x=>x.id===ci.id);
+      const sub = p.price * ci.qty;
+      total += sub;
+      return `
+        <div class="cartItem" style="border:1px solid rgba(181,107,255,.25);border-radius:14px;padding:10px;background:rgba(255,255,255,.06);margin-bottom:10px">
+          <div><b>${p.nome}</b><br><small>${ci.qty}x • Subtotal: ${fmt(sub)}</small></div>
+          <div style="display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap">
+            <button class="miniBtn" style="width:36px;height:36px;border-radius:12px;border:1px solid rgba(181,107,255,.45);background:rgba(255,255,255,.08);color:#fff;font-weight:1000;cursor:pointer" onclick="qtyMinus('${ci.id}')">−</button>
+            <button class="miniBtn" style="width:36px;height:36px;border-radius:12px;border:1px solid rgba(181,107,255,.45);background:rgba(255,255,255,.08);color:#fff;font-weight:1000;cursor:pointer" onclick="qtyPlus('${ci.id}')">+</button>
+            <button class="removeBtn" style="height:36px;padding:0 10px;border-radius:12px;border:1px solid rgba(255,77,255,.45);background:rgba(255,77,255,.12);color:#fff;font-weight:1000;cursor:pointer" onclick="removeItem('${ci.id}')">Remover</button>
           </div>
+        </div>
+      `;
+    }).join("");
+    box.innerHTML += `<div class="hint" style="margin-top:8px"><b>Total:</b> ${fmt(total)}</div>`;
+  }
+
+  function qtyMinus(id){
+    const it = cart.find(x=>x.id===id);
+    if(!it) return;
+    it.qty -= 1;
+    if(it.qty<=0) cart = cart.filter(x=>x.id!==id);
+    renderCart();
+  }
+  function qtyPlus(id){
+    const it = cart.find(x=>x.id===id);
+    if(!it) return;
+    it.qty += 1;
+    renderCart();
+  }
+  function removeItem(id){
+    cart = cart.filter(x=>x.id!==id);
+    renderCart();
+  }
+
+  // PAGAR: aqui você chama seu bot pra criar pagamento (init_point)
+  async function pagar(){
+    const email = (document.getElementById("buyerEmail").value||"").trim();
+    if(!email || !email.includes("@")){
+      document.getElementById("status").innerText = "Coloque um e-mail válido.";
+      return;
+    }
+    if(cart.length===0){
+      document.getElementById("status").innerText = "Carrinho vazio.";
+      return;
+    }
+
+    const items = cart.map(ci=>{
+      const p = produtos.find(x=>x.id===ci.id);
+      return { id:p.id, title:p.nome, quantity:ci.qty, unit_price:p.price };
+    });
+
+    document.getElementById("status").innerText = "Criando pagamento...";
+    try{
+      const r = await fetch(API_BASE + "/api/mp/create", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          buyerEmail: email,
+          items,
+          siteBase: location.origin + location.pathname.replace(/\/[^\/]*$/, "/")
+        })
+      });
+      const data = await r.json();
+      if(!r.ok) throw new Error(data?.error || "Erro");
+      // abre checkout do MP
+      window.location.href = data.init_point;
+    }catch(e){
+      document.getElementById("status").innerText = "Erro de conexão com o bot.";
+    }
+  }
+
+  // ========= 📥 COMPRAS =========
+  function openDrawer(){
+    document.getElementById("drawer").classList.add("open");
+    loadPurchases();
+  }
+  function closeDrawer(){
+    document.getElementById("drawer").classList.remove("open");
+  }
+
+  function getToken(){
+    const t = localStorage.getItem("jn_token");
+    return (t && t.length>10) ? t : null;
+  }
+
+  async function loadPurchases(){
+    const wrap = document.getElementById("drawerBody");
+    wrap.innerHTML = "";
+
+    const token = getToken();
+
+    // Se não tem token, não mostra nada (do jeito que você pediu)
+    if(!token){
+      wrap.innerHTML = `<div class="hint">Nenhuma compra encontrada.</div>`;
+      return;
+    }
+
+    try{
+      const r = await fetch(API_BASE + "/api/purchases?token=" + encodeURIComponent(token));
+      const data = await r.json();
+      if(!r.ok) throw new Error(data?.error || "Falha");
+
+      // monta painel BRP1..5
+      const boughtMap = new Map((data.purchases||[]).map(p=>[p.productId, p]));
+      produtos.forEach(p=>{
+        const got = boughtMap.get(p.id);
+        const div = document.createElement("div");
+        div.className = "buyCard";
+        div.innerHTML = `
+          <h4>${p.nome}</h4>
+          <button class="reveal" ${got ? "" : "disabled"}>${got ? "Ver produto 📌" : "Bloqueado 🔒"}</button>
+          <div class="codeBox"></div>
         `;
-      }).join("");
-      document.getElementById("cartTotal").innerText = fmt(total);
-    }
+        const btn = div.querySelector(".reveal");
+        const box = div.querySelector(".codeBox");
 
-    // ===== pagar no pix (chama o BOT) =====
-    async function finalizarPix(){
-      if(cart.length===0) return alert("Carrinho vazio.");
-
-      const buyerEmail = (document.getElementById("buyerEmail").value || "").trim();
-      if(!buyerEmail || !buyerEmail.includes("@")) return alert("Coloca um e-mail válido.");
-
-      document.getElementById("payHint").style.display = "block";
-
-      try{
-        // ✅ Ajuste o endpoint para o que existe no seu bot
-        // Ideia: bot retorna { ok:true, pay_url:"https://..." }
-        const res = await fetch(`${API_BASE}/api/create-order`, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({ cart, compradorEmail: buyerEmail })
-        });
-        const data = await res.json();
-
-        if(!data.ok){
-          document.getElementById("payHint").style.display = "none";
-          return alert(data.erro || "Erro criando pedido.");
+        if(got){
+          btn.onclick = ()=>{
+            box.style.display = (box.style.display==="block" ? "none" : "block");
+            box.textContent = "CÓDIGO: " + (got.code || "SEM-CODIGO");
+          };
         }
-
-        // abre pagamento (link pix / checkout)
-        if(data.pay_url) window.open(data.pay_url, "_blank");
-
-        alert("✅ Pedido criado! Pague no PIX e você recebe no e-mail.");
-      }catch(e){
-        alert("Erro de conexão com o bot.");
-      }finally{
-        document.getElementById("payHint").style.display = "none";
-      }
+        wrap.appendChild(div);
+      });
+    }catch(e){
+      wrap.innerHTML = `<div class="hint">Erro ao carregar compras.</div>`;
     }
+  }
 
-    // expõe
-    window.openLogin=openLogin;
-    window.closeLogin=closeLogin;
-    window.openSearch=openSearch;
-    window.closeSearch=closeSearch;
-    window.doSearch=doSearch;
-    window.openCart=openCart;
-    window.closeCart=closeCart;
-    window.cartMinus=cartMinus;
-    window.cartPlus=cartPlus;
-    window.cartRemove=cartRemove;
-    window.finalizarPix=finalizarPix;
-
-    window.openDetail=openDetail;
-    window.closeDetail=closeDetail;
-    window.detailAddToCart=detailAddToCart;
-    window.openWhatsapp=openWhatsapp;
-
-    document.getElementById("year").innerText = new Date().getFullYear();
-
-    render();
-  </script>
+  render();
+</script>
 </body>
 </html>
