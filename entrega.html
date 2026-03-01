@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JN VENDAS • Entrega</title>
+<style>
+  :root{ --neon:#b56bff; --neon2:#ff4dff; --bg1:#140022; --bg2:#2a0047; --bg3:#4d0099; }
+  body{ margin:0; font-family:Arial; background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3)); color:white; min-height:100vh; overflow-x:hidden; }
+  .snow{ position:fixed; top:-10px; width:6px;height:6px; background:var(--neon); border-radius:50%; opacity:.9; pointer-events:none; animation:fall linear forwards; z-index:1; box-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55); }
+  @keyframes fall{ to{ transform:translateY(120vh); } }
+  .wrap{ position:relative; z-index:2; max-width:520px; margin:0 auto; padding:18px 14px 40px; }
+  .top{ display:flex; align-items:center; justify-content:center; gap:10px; padding:14px 12px; margin:10px 0 18px; border-radius:18px;
+    border:1px solid rgba(181,107,255,.35); background:rgba(255,255,255,.06); box-shadow:0 0 16px rgba(181,107,255,.28); font-weight:1000; }
+  .card{ border-radius:18px; border:1px solid rgba(181,107,255,.35); background:rgba(255,255,255,.06); padding:14px; }
+  .hint{ opacity:.85; font-weight:900; font-size:13px; line-height:1.45; }
+  .btn{ margin-top:12px; width:100%; padding:10px; border-radius:12px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); color:white; font-weight:1000; cursor:pointer; }
+  .danger{ border-color: rgba(255,77,255,.6); background: rgba(255,77,255,.12); }
+  .row{ display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; }
+  .tag{ display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); font-weight:1000; }
+  .secret{ margin-top:12px; display:none; }
+  .secret .field{ margin-top:10px; border-radius:14px; border:1px solid rgba(181,107,255,.35); padding:10px; background:rgba(0,0,0,.18); }
+  .label{ opacity:.85; font-size:12px; font-weight:900; }
+  .value{ margin-top:6px; font-weight:1000; word-break:break-word; }
+  .copy{ margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+  .mini{ padding:9px 12px; border-radius:12px; border:1px solid rgba(181,107,255,.55); background:rgba(255,255,255,.08); color:#fff; font-weight:1000; cursor:pointer; }
+  .footer{ text-align:center; opacity:.55; font-weight:900; font-size:12px; margin-top:16px; }
+</style>
+</head>
+<body>
+<script>
+  // chuvisco roxo
+  function createSnow(){
+    const s=document.createElement("div");
+    s.className="snow";
+    s.style.left=Math.random()*100+"vw";
+    s.style.animationDuration=(Math.random()*4+4)+"s";
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(),8000);
+  }
+  setInterval(createSnow,160);
+</script>
+
+<div class="wrap">
+  <div class="top">🇧🇷 JN VENDAS • ENTREGA ✅</div>
+
+  <div class="card">
+    <div class="row">
+      <div>
+        <div style="font-weight:1000; font-size:14px;">Seu pedido</div>
+        <div class="hint" id="status">Carregando…</div>
+      </div>
+      <span class="tag" id="produtoTag">—</span>
+    </div>
+
+    <button class="btn" id="btnVer" onclick="mostrarConta()" disabled>🔐 Ver conta</button>
+    <button class="btn danger" onclick="voltar()">← Voltar para loja</button>
+
+    <div class="secret" id="secret">
+      <div class="field">
+        <div class="label">📧 Email</div>
+        <div class="value" id="accEmail">—</div>
+        <div class="copy">
+          <button class="mini" onclick="copiar('accEmail')">Copiar email</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">🔑 Senha</div>
+        <div class="value" id="accPass">—</div>
+        <div class="copy">
+          <button class="mini" onclick="copiar('accPass')">Copiar senha</button>
+        </div>
+      </div>
+
+      <div class="hint" style="margin-top:12px;">
+        ⚠️ Guarde esse link. Ele é seu e não expira (enquanto o sistema estiver no ar).
+      </div>
+    </div>
+
+    <div class="footer">© 2026</div>
+  </div>
+</div>
+
+<script>
+  const API_BASE = "https://jnvendas-bot.onrender.com"; // troque se o seu bot for outro
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token") || "";
+
+  let payload = null;
+
+  function voltar(){
+    location.href = "./";
+  }
+
+  function copiar(id){
+    const txt = document.getElementById(id).innerText || "";
+    navigator.clipboard.writeText(txt).then(()=>alert("Copiado ✅"));
+  }
+
+  async function carregar(){
+    if(!token){
+      document.getElementById("status").innerText = "❌ Link inválido. Pegue o link no seu e-mail.";
+      return;
+    }
+    try{
+      const res = await fetch(`${API_BASE}/api/delivery?token=${encodeURIComponent(token)}`);
+      const data = await res.json();
+      if(!data.ok){
+        document.getElementById("status").innerText = "⏳ Ainda não confirmado ou link inválido.";
+        return;
+      }
+      payload = data;
+      document.getElementById("produtoTag").innerText = data.produto || "—";
+      document.getElementById("status").innerText = "✅ Pagamento confirmado. Clique em VER CONTA.";
+      document.getElementById("btnVer").disabled = false;
+    }catch(e){
+      document.getElementById("status").innerText = "❌ Erro de conexão com o bot.";
+    }
+  }
+
+  function mostrarConta(){
+    if(!payload) return;
+    document.getElementById("secret").style.display = "block";
+    document.getElementById("accEmail").innerText = payload.conta?.email || "—";
+    document.getElementById("accPass").innerText = payload.conta?.senha || "—";
+    document.getElementById("btnVer").disabled = true;
+    document.getElementById("btnVer").innerText = "✅ Mostrado";
+  }
+
+  carregar();
+</script>
+</body>
+</html>
+
