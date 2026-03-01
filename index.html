@@ -6,177 +6,172 @@
 <title>JN VENDAS</title>
 
 <style>
+:root{
+  --bg1:#140022;
+  --bg2:#2a0047;
+  --bg3:#4d0099;
+  --neon:#b56bff;
+}
+
 body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:linear-gradient(135deg,#140022,#2a0047,#4d0099);
-    color:white;
-    overflow-x:hidden;
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3));
+  color:#fff;
+  overflow-x:hidden;
 }
 
 /* CHUVISCO ROXO */
 .rain{
-    position:fixed;
-    top:-20px;
-    width:3px;
-    height:16px;
-    background:linear-gradient(180deg, rgba(181,107,255,0), rgba(181,107,255,.95));
-    border-radius:999px;
-    animation:fall linear forwards;
-    pointer-events:none;
-    z-index:0;
+  position:fixed;
+  top:-20px;
+  width:3px;
+  height:18px;
+  background:linear-gradient(180deg,transparent,var(--neon));
+  border-radius:999px;
+  animation:fall linear forwards;
+  pointer-events:none;
+  z-index:0;
 }
 @keyframes fall{
-    to{ transform:translateY(110vh); }
+  to{transform:translateY(110vh);}
 }
 
+/* HEADER */
 .header{
-    padding:20px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    font-weight:bold;
+  padding:15px 20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-weight:900;
+  font-size:14px;
+  background:rgba(0,0,0,.2);
+  backdrop-filter:blur(6px);
 }
 
 .actions button{
-    margin-left:10px;
-    padding:6px 10px;
-    border-radius:8px;
-    border:none;
-    background:#8a2be2;
-    color:white;
-    cursor:pointer;
+  margin-left:8px;
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid var(--neon);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  cursor:pointer;
 }
 
+/* GRID */
 .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-    gap:15px;
-    padding:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:15px;
+  padding:20px;
+  position:relative;
+  z-index:2;
 }
 
 .card{
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.2);
-    border-radius:15px;
-    padding:15px;
-    text-align:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:18px;
+  padding:15px;
+  text-align:center;
+}
+
+.thumb{
+  height:120px;
+  background:#fff;
+  color:#2a0047;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  font-weight:900;
 }
 
 .old{
-    text-decoration:line-through;
-    opacity:.6;
+  text-decoration:line-through;
+  opacity:.6;
+  font-weight:900;
 }
 
 .price{
-    font-size:18px;
-    font-weight:bold;
-    animation:blink 1s infinite;
+  font-size:18px;
+  font-weight:900;
+  color:var(--neon);
+  animation:blink 1s infinite;
 }
 @keyframes blink{
-    0%,100%{opacity:1;}
-    50%{opacity:.4;}
+  0%,100%{opacity:1;}
+  50%{opacity:.3;}
 }
 
 button{
-    margin-top:8px;
-    padding:8px;
-    border-radius:8px;
-    border:none;
-    cursor:pointer;
-    background:#a64dff;
-    color:white;
+  margin-top:8px;
+  padding:8px;
+  border-radius:8px;
+  border:1px solid var(--neon);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  cursor:pointer;
+  font-weight:900;
 }
 
+/* MODAL */
 .modal{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.7);
-    display:none;
-    align-items:center;
-    justify-content:center;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
 }
 
 .modal-content{
-    background:#1c0033;
-    padding:20px;
-    border-radius:15px;
-    width:90%;
-    max-width:400px;
+  background:#1c0033;
+  padding:20px;
+  border-radius:15px;
+  width:90%;
+  max-width:400px;
 }
 
 .star{
-    font-size:22px;
-    cursor:pointer;
+  font-size:22px;
+  cursor:pointer;
 }
 .star.active{
-    color:#b56bff;
+  color:var(--neon);
 }
 </style>
 </head>
 <body>
 
 <div class="header">
-    🇧🇷 JN VENDAS
-    <div class="actions">
-        <button onclick="openCart()">🛒</button>
-        <button onclick="openPurchases()">📥</button>
-        <button onclick="openAdmin()">ADM</button>
-    </div>
+  🇧🇷 JN VENDAS
+  <div class="actions">
+    <button onclick="openCart()">🛒</button>
+    <button onclick="openPurchases()">📥</button>
+  </div>
 </div>
 
 <div class="grid" id="products"></div>
 
 <!-- CARRINHO -->
 <div class="modal" id="cartModal">
-<div class="modal-content">
-<h3>🛒 Carrinho</h3>
-<div id="cartItems"></div>
-<button onclick="closeCart()">Fechar</button>
-</div>
+  <div class="modal-content">
+    <h3>🛒 Carrinho</h3>
+    <div id="cartItems"></div>
+    <button onclick="closeCart()">Fechar</button>
+  </div>
 </div>
 
 <!-- COMPRAS -->
 <div class="modal" id="buyModal">
-<div class="modal-content">
-<h3>📥 Minhas Compras</h3>
-<div id="buyItems">Você não tem nenhum item comprado.</div>
-<button onclick="closePurchases()">Fechar</button>
-</div>
-</div>
-
-<!-- AVALIAÇÃO -->
-<div class="modal" id="rateModal">
-<div class="modal-content">
-<h3>⭐ Avaliar Produto</h3>
-<div id="stars"></div>
-<textarea style="width:100%;margin-top:10px;border-radius:8px;padding:8px;"></textarea>
-<button onclick="closeRate()">Confirmar</button>
-</div>
-</div>
-
-<!-- ADMIN -->
-<div class="modal" id="adminModal">
-<div class="modal-content">
-<h3>🔐 Painel ADM</h3>
-<input id="adminUser" placeholder="Usuário" style="width:100%;margin-bottom:5px;">
-<input id="adminPass" type="password" placeholder="Senha" style="width:100%;margin-bottom:5px;">
-<button onclick="loginAdmin()">Entrar</button>
-<div id="adminPanel" style="display:none;margin-top:10px;">
-<p>Adicionar estoque:</p>
-<select id="stockProduct">
-<option>BRP1</option>
-<option>BRP2</option>
-<option>BRP3</option>
-<option>BRP4</option>
-<option>BRP5</option>
-</select>
-<input placeholder="Email conta">
-<input placeholder="Senha conta">
-<button>Salvar</button>
-</div>
-<button onclick="closeAdmin()">Fechar</button>
-</div>
+  <div class="modal-content">
+    <h3>📥 Minhas Compras</h3>
+    <div id="buyItems">Você não tem nenhum item comprado.</div>
+    <button onclick="closePurchases()">Fechar</button>
+  </div>
 </div>
 
 <script>
@@ -184,68 +179,50 @@ const produtos=["BRP1","BRP2","BRP3","BRP4","BRP5"];
 const grid=document.getElementById("products");
 let cart=[];
 
+/* RENDER PRODUTOS */
 function render(){
-grid.innerHTML=produtos.map(p=>`
-<div class="card">
-<h3>ROLEPLAY ${p}</h3>
-<div class="old">R$ 20,00</div>
-<div class="price">R$ 12,00</div>
-<button onclick="addCart('${p}')">Adicionar</button>
-<button onclick="rate()">Avaliar</button>
-</div>
-`).join("");
+  grid.innerHTML=produtos.map(p=>`
+  <div class="card">
+    <div class="thumb">ROLEPLAY</div>
+    <h3>CONTAS ${p}</h3>
+    <div class="old">R$ 20,00</div>
+    <div class="price">R$ 12,00</div>
+    <button onclick="addCart('${p}')">Adicionar</button>
+  </div>
+  `).join("");
 }
 render();
 
+/* CARRINHO */
 function addCart(p){
-cart.push(p);
-alert(p+" adicionado ao carrinho");
+  cart.push(p);
+  alert(p+" adicionado ao carrinho");
 }
 
 function openCart(){
-document.getElementById("cartItems").innerHTML=cart.join("<br>")||"Carrinho vazio";
-document.getElementById("cartModal").style.display="flex";
+  document.getElementById("cartItems").innerHTML=cart.length?cart.join("<br>"):"Carrinho vazio";
+  document.getElementById("cartModal").style.display="flex";
 }
-function closeCart(){document.getElementById("cartModal").style.display="none";}
-
-function openPurchases(){document.getElementById("buyModal").style.display="flex";}
-function closePurchases(){document.getElementById("buyModal").style.display="none";}
-
-function rate(){
-document.getElementById("rateModal").style.display="flex";
-let stars="";
-for(let i=1;i<=5;i++){
-stars+=`<span class="star" onclick="selectStar(${i})">💫</span>`;
-}
-document.getElementById("stars").innerHTML=stars;
-}
-function selectStar(n){
-document.querySelectorAll(".star").forEach((s,i)=>{
-s.classList.toggle("active",i<n);
-});
-}
-function closeRate(){document.getElementById("rateModal").style.display="none";}
-
-function openAdmin(){document.getElementById("adminModal").style.display="flex";}
-function closeAdmin(){document.getElementById("adminModal").style.display="none";}
-function loginAdmin(){
-if(document.getElementById("adminUser").value==="ezzjn" &&
-document.getElementById("adminPass").value==="caramelo"){
-document.getElementById("adminPanel").style.display="block";
-alert("Logado");
-}else{
-alert("Senha incorreta");
-}
+function closeCart(){
+  document.getElementById("cartModal").style.display="none";
 }
 
-/* chuva */
+/* COMPRAS */
+function openPurchases(){
+  document.getElementById("buyModal").style.display="flex";
+}
+function closePurchases(){
+  document.getElementById("buyModal").style.display="none";
+}
+
+/* CHUVA */
 function rain(){
-let r=document.createElement("div");
-r.className="rain";
-r.style.left=Math.random()*100+"vw";
-r.style.animationDuration=(Math.random()*3+2)+"s";
-document.body.appendChild(r);
-setTimeout(()=>r.remove(),5000);
+  let r=document.createElement("div");
+  r.className="rain";
+  r.style.left=Math.random()*100+"vw";
+  r.style.animationDuration=(Math.random()*3+2)+"s";
+  document.body.appendChild(r);
+  setTimeout(()=>r.remove(),5000);
 }
 setInterval(rain,120);
 </script>
