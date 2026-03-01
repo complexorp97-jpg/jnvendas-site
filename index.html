@@ -1,591 +1,176 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JN VENDAS</title>
 
 <style>
-  :root{ --neon:#b56bff; --neon2:#ff4dff; --bg1:#140022; --bg2:#2a0047; --bg3:#4d0099; }
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(180deg,#140022,#2a0047,#4d0099);
+  min-height:100vh;
+  color:white;
+  overflow-x:hidden;
+}
 
-  *{box-sizing:border-box}
-  body{ margin:0; font-family:Arial; background:linear-gradient(180deg,var(--bg1),var(--bg2),var(--bg3)); color:white; overflow-x:hidden; }
+/* CHUVISCO ROXO */
+.rain{
+  position:fixed;
+  top:-20px;
+  width:3px;
+  height:18px;
+  background:linear-gradient(180deg,rgba(181,107,255,0),rgba(181,107,255,.95));
+  border-radius:999px;
+  animation:fall linear forwards;
+  z-index:0;
+}
+@keyframes fall{
+  to{transform:translateY(120vh);}
+}
 
-  /* ✅ CHUVISCO ROXO */
-  .snow{
-    position:fixed; top:-20px;
-    width:3px; height:18px;
-    background:linear-gradient(180deg, rgba(181,107,255,0), rgba(181,107,255,.95));
-    border-radius:999px;
-    opacity:.85;
-    pointer-events:none;
-    animation:fall linear forwards;
-    z-index:1;
-    box-shadow:0 0 10px rgba(181,107,255,.45);
-  }
-  @keyframes fall{ to{ transform:translateY(120vh); } }
+.topbar{
+  position:sticky;
+  top:0;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:rgba(0,0,0,.3);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(181,107,255,.4);
+  z-index:10;
+}
 
-  .topbar{
-    position:sticky; top:0; z-index:10;
-    padding:12px 15px;
-    display:flex; justify-content:space-between; align-items:center; gap:10px;
-    background:rgba(0,0,0,.18);
-    backdrop-filter:blur(8px);
-    border-bottom:1px solid rgba(181,107,255,.45);
-  }
-  .logo{ font-weight:1000; font-size:14px; letter-spacing:.6px; text-shadow:0 0 10px rgba(181,107,255,.8); white-space:nowrap; }
+.logo{
+  font-weight:900;
+  font-size:14px;
+  letter-spacing:.5px;
+}
 
-  .actions{ display:flex; gap:10px; align-items:center; }
+.actions{
+  display:flex;
+  gap:10px;
+}
 
-  .pill,.iconBtn{
-    height:32px; border-radius:10px;
-    border:1px solid rgba(181,107,255,.55);
-    background:rgba(255,255,255,.08);
-    color:#fff; font-weight:1000; cursor:pointer;
-  }
-  .pill{ padding:0 10px; }
-  .iconBtn{ width:32px; display:flex; align-items:center; justify-content:center; text-decoration:none; }
+.icon{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  border:1px solid rgba(181,107,255,.6);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.08);
+  cursor:pointer;
+}
 
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:14px;
-    padding:14px;
-    position:relative;
-    z-index:2;
-    max-width:980px;
-    margin:0 auto;
-  }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+  padding:20px;
+  position:relative;
+  z-index:1;
+}
 
-  .card{
-    background:rgba(255,255,255,.03);
-    border:1px solid rgba(181,107,255,.35);
-    border-radius:18px;
-    padding:10px;
-    text-align:center;
-    cursor:pointer;
-  }
+.card{
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(181,107,255,.3);
+  border-radius:15px;
+  padding:12px;
+  text-align:center;
+}
 
-  .thumb{
-    height:120px;
-    border-radius:14px;
-    display:flex; align-items:center; justify-content:center;
-    font-weight:1000;
-    background:white;
-    color:#2a0047;
-    box-shadow:0 0 16px rgba(181,107,255,.35);
-    letter-spacing:.7px;
-  }
+.thumb{
+  height:120px;
+  background:white;
+  color:#2a0047;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  margin-bottom:10px;
+}
 
-  .card h3{ margin:10px 0 6px; font-size:13px; text-transform:uppercase; }
-  .old{ text-decoration:line-through; opacity:.65; font-weight:900; }
-  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
-  .new{
-    font-size:18px; font-weight:1000; color:var(--neon);
-    text-shadow:0 0 10px rgba(181,107,255,.9),0 0 18px rgba(255,77,255,.55);
-    animation:blink 1s infinite;
-  }
-  .btn{
-    margin-top:10px; width:100%; padding:8px;
-    border-radius:10px;
-    border:1px solid rgba(181,107,255,.55);
-    background:rgba(255,255,255,.08);
-    color:white; font-weight:1000; cursor:pointer;
-  }
+.old{
+  text-decoration:line-through;
+  opacity:.6;
+  font-weight:900;
+}
 
-  .modalBg{ position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; z-index:99; }
-  .modalBg.show{ display:block; }
+.price{
+  font-size:18px;
+  font-weight:900;
+  color:#b56bff;
+}
 
-  .modal{
-    width:min(520px, calc(100vw - 26px));
-    position:fixed; left:50%; top:50%;
-    transform:translate(-50%,-50%);
-    border-radius:18px;
-    border:1px solid rgba(181,107,255,.45);
-    background:rgba(20,0,34,.92);
-    backdrop-filter: blur(10px);
-    padding:12px;
-  }
-
-  .modalHead{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
-  .closeBtn{
-    width:40px;height:40px;border-radius:12px;
-    border:1px solid rgba(181,107,255,.45);
-    background:rgba(255,255,255,.08);
-    color:#fff;font-weight:1000;cursor:pointer;
-  }
-
-  .input{
-    width:100%; height:44px;
-    border-radius:14px;
-    border:1px solid rgba(181,107,255,.45);
-    background:rgba(255,255,255,.08);
-    color:#fff;
-    padding:0 12px;
-    outline:none;
-    font-weight:1000;
-  }
-
-  .hint{ margin-top:8px; color:rgba(255,255,255,.75); font-size:12px; font-weight:800; }
-
-  .cartList{ display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow:auto; }
-  .cartItem{
-    border:1px solid rgba(181,107,255,.30);
-    background:rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:10px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-  }
-  .miniBtns{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
-  .miniBtn{
-    width:36px;height:36px;border-radius:12px;
-    border:1px solid rgba(181,107,255,.45);
-    background:rgba(255,255,255,.08);
-    color:#fff;font-weight:1000;cursor:pointer;
-  }
-  .removeBtn{
-    height:36px; padding:0 10px; border-radius:12px;
-    border:1px solid rgba(255,77,255,.45);
-    background:rgba(255,77,255,.12);
-    color:#fff; font-weight:1000; cursor:pointer;
-  }
-
-  .totalRow{
-    margin-top:10px;
-    border-top:1px solid rgba(181,107,255,.25);
-    padding-top:10px;
-    display:flex;
-    justify-content:space-between;
-    font-weight:1000;
-  }
-
-  .pixGlow{ animation:glow 1s infinite; box-shadow:0 0 15px var(--neon), 0 0 30px var(--neon2); }
-  @keyframes glow{0%,100%{filter:brightness(1);}50%{filter:brightness(1.6);} }
-
-  /* descrição menor (✅ pedido) */
-  .descBox{
-    margin-top:10px;
-    border:1px solid rgba(181,107,255,.30);
-    background:rgba(255,255,255,.06);
-    border-radius:14px;
-    padding:10px;
-    line-height:1.35;
-    font-weight:900;
-    opacity:.95;
-    font-size:12px;
-  }
-
-  .rowBtns{ margin-top:12px; display:flex; gap:10px; }
-  .rowBtns .btn{ margin-top:0; }
-
-  /* botão pix com ícone */
-  .pixBtn{
-    display:flex; align-items:center; justify-content:center; gap:10px;
-  }
-  .pixBtn img{ height:20px; width:auto; display:block; }
-
-  /* WhatsApp icon (SVG) */
-  .waSvg{ width:18px; height:18px; display:block; }
+.btn{
+  margin-top:10px;
+  padding:8px;
+  width:100%;
+  border-radius:10px;
+  border:1px solid rgba(181,107,255,.6);
+  background:rgba(255,255,255,.1);
+  color:white;
+  font-weight:900;
+  cursor:pointer;
+}
 </style>
 </head>
+
 <body>
 
 <div class="topbar">
   <div class="logo">🇧🇷 JN VENDAS</div>
   <div class="actions">
-    <!-- ✅ WhatsApp logo -->
-    <a class="iconBtn" title="WhatsApp" target="_blank" rel="noopener"
-       href="https://chat.whatsapp.com/H1Q6IzfX11kC68TYXcr2Co?mode=gi_t">
-      <svg class="waSvg" viewBox="0 0 32 32" aria-hidden="true">
-        <path fill="#25D366" d="M19.1 17.4c-.3-.2-1.7-.8-2-.9-.3-.1-.5-.2-.7.2-.2.3-.8.9-1 1.1-.2.2-.4.2-.7.1-.3-.2-1.2-.4-2.3-1.4-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6.1-.1.3-.4.4-.5.1-.2.2-.3.3-.5.1-.2.1-.4 0-.6-.1-.2-.7-1.7-1-2.3-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.2 1.1-1.2 2.8s1.2 3.2 1.4 3.4c.2.2 2.4 3.7 5.9 5.2.8.3 1.4.5 1.9.6.8.2 1.5.2 2.1.1.6-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.1-1.4-.1-.2-.3-.2-.6-.4z"/>
-        <path fill="#25D366" d="M27.4 4.6C24.6 1.8 20.9.3 17 .3 9 .3 2.6 6.7 2.6 14.7c0 2.5.7 5 2.1 7.1L3.3 30l8.4-1.3c2 .9 4.2 1.4 6.4 1.4 8 0 14.4-6.5 14.4-14.4 0-3.9-1.5-7.6-4.2-10.3zm-10.4 23c-2.1 0-4.1-.5-5.9-1.5l-.4-.2-5 .8.8-4.9-.2-.5c-1.2-1.9-1.8-4.1-1.8-6.3 0-6.6 5.4-12 12-12 3.2 0 6.2 1.2 8.5 3.5 2.3 2.3 3.5 5.3 3.5 8.5 0 6.6-5.4 12.1-12 12.1z"/>
-      </svg>
-    </a>
-
-    <!-- ✅ 📥 do lado do WhatsApp -->
-    <button class="iconBtn" onclick="openPurchases()" title="Minhas compras">📥</button>
-
-    <button class="iconBtn" onclick="openSearch()" title="Pesquisar">🔍</button>
-    <button class="iconBtn" onclick="openCart()" title="Carrinho">🛒</button>
+    <div class="icon">📥</div>
+    <div class="icon">🔍</div>
+    <div class="icon">🛒</div>
   </div>
 </div>
 
-<div id="list" class="grid"></div>
-
-<!-- PESQUISA -->
-<div class="modalBg" id="searchBg" onclick="closeSearch()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <b>🔍 Pesquisar produto</b>
-      <button class="closeBtn" onclick="closeSearch()">✕</button>
-    </div>
-    <input class="input" id="searchInput" placeholder="Ex: BRP1, BRP2..." oninput="doSearch()">
-    <div class="hint">Digite: BRP1 / BRP2 / BRP3 / BRP4 / BRP5</div>
-  </div>
-</div>
-
-<!-- CARRINHO -->
-<div class="modalBg" id="cartBg" onclick="closeCart()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <b>🛒 Carrinho</b>
-      <button class="closeBtn" onclick="closeCart()">✕</button>
-    </div>
-
-    <div class="cartList" id="cartList"></div>
-
-    <div class="totalRow">
-      <span>Total</span>
-      <span id="cartTotal">R$ 0,00</span>
-    </div>
-  </div>
-</div>
-
-<!-- 📥 MINHAS COMPRAS -->
-<div class="modalBg" id="buyBg" onclick="closePurchases()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <b>📥 Minhas compras</b>
-      <button class="closeBtn" onclick="closePurchases()">✕</button>
-    </div>
-    <div class="hint" id="buyHint">Carregando...</div>
-    <div class="cartList" id="buyList"></div>
-  </div>
-</div>
-
-<!-- DETALHES DO PRODUTO (igual antigo) -->
-<div class="modalBg" id="detailBg" onclick="closeDetail()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <b id="detailTitle">📦 Produto</b>
-      <button class="closeBtn" onclick="closeDetail()">✕</button>
-    </div>
-
-    <div class="thumb" style="height:150px;margin-bottom:10px">ROLEPLAY</div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
-      <div>
-        <div class="old" id="detailOld"></div>
-        <div class="new" id="detailPrice"></div>
-      </div>
-      <div style="text-align:right">
-        <div class="hint" style="margin:0">Contas BRP • 0/3 • 10HRS • Discord</div>
-      </div>
-    </div>
-
-    <!-- ✅ descrição menor + emojis (sem estrela aqui) -->
-    <div class="descBox" id="detailDesc"></div>
-
-    <!-- ✅ 2 botões: pagar agora + adicionar carrinho -->
-    <div class="rowBtns">
-      <button class="btn" style="width:45%;" onclick="detailAddToCart()">🛒 Adicionar</button>
-      <button class="btn pixGlow pixBtn" style="width:55%;" onclick="payNow()">
-        <img alt="PIX" src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Pix_Logo.svg">
-        Pagar agora
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- PIX MODAL (mostra QR/código vindo do bot) -->
-<div class="modalBg" id="pixBg" onclick="closePix()">
-  <div class="modal" onclick="event.stopPropagation()">
-    <div class="modalHead">
-      <b>💠 PIX</b>
-      <button class="closeBtn" onclick="closePix()">✕</button>
-    </div>
-
-    <div class="hint">Depois de pagar, sua compra aparece no 📥.</div>
-
-    <div id="pixBox" class="descBox" style="text-align:center;">
-      Gerando pagamento...
-    </div>
-
-    <button class="btn" id="openPayBtn" style="display:none" onclick="openPayLink()">Abrir pagamento</button>
-    <button class="btn" id="copyPixBtn" style="display:none" onclick="copyPix()">Copiar código</button>
-
-    <div class="hint" id="pixStatus"></div>
-  </div>
-</div>
+<div class="grid" id="products"></div>
 
 <script>
-  // ✅ coloque o link do seu bot aqui
-  const API_BASE = "https://jnvendas-bot.onrender.com";
 
-  const produtos = [
-    { id:"BRP1", tag:"BRP1", nome:"CONTAS BRP1", old:20, price:12 },
-    { id:"BRP2", tag:"BRP2", nome:"CONTAS BRP2", old:20, price:12 },
-    { id:"BRP3", tag:"BRP3", nome:"CONTAS BRP3", old:20, price:12 },
-    { id:"BRP4", tag:"BRP4", nome:"CONTAS BRP4", old:20, price:12 },
-    { id:"BRP5", tag:"BRP5", nome:"CONTAS BRP5", old:20, price:12 }
-  ];
+const produtos = [
+  {nome:"CONTAS BRP1", old:20, price:12},
+  {nome:"CONTAS BRP2", old:20, price:12},
+  {nome:"CONTAS BRP3", old:20, price:12},
+  {nome:"CONTAS BRP4", old:20, price:12},
+  {nome:"CONTAS BRP5", old:20, price:12}
+];
 
-  const DEFAULT_DESC = [
-    "🧾 Contas BRP 0/3",
-    "⏱️ 10HRS com autorização",
-    "💬 Discord vinculado"
-  ];
+const container = document.getElementById("products");
 
-  let filtered = [...produtos];
-  let cart = JSON.parse(localStorage.getItem("jn_cart") || "[]"); // [{id, qty}]
-  let currentProductId = null;
+function render(){
+  container.innerHTML = produtos.map(p=>`
+    <div class="card">
+      <div class="thumb">ROLEPLAY</div>
+      <h4>${p.nome}</h4>
+      <div class="old">R$ ${p.old},00</div>
+      <div class="price">R$ ${p.price},00</div>
+      <button class="btn">Ver Produto</button>
+    </div>
+  `).join("");
+}
 
-  let lastPayUrl = "";
-  let lastPixCode = "";
-
-  const fmt = (n)=> n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-
-  // ✅ chuvisco roxo
-  function createSnow(){
-    const s=document.createElement("div");
-    s.className="snow";
-    s.style.left=Math.random()*100+"vw";
-    s.style.animationDuration=(Math.random()*2.8+2.8)+"s";
-    s.style.width=(Math.random()*2+2)+"px";
-    s.style.height=(Math.random()*18+10)+"px";
-    s.style.opacity=(Math.random()*.35+.5);
-    document.body.appendChild(s);
-    setTimeout(()=>s.remove(),6500);
-  }
-  setInterval(createSnow,120);
-
-  function saveCart(){ localStorage.setItem("jn_cart", JSON.stringify(cart)); }
-
-  function render(){
-    document.getElementById("list").innerHTML = filtered.map(p=>`
-      <div class="card" onclick="openDetail('${p.id}')">
-        <div class="thumb">ROLEPLAY</div>
-        <h3>${p.nome}</h3>
-        <div class="old">${fmt(p.old)}</div>
-        <div class="new">${fmt(p.price)}</div>
-        <button class="btn" onclick="event.stopPropagation(); openDetail('${p.id}')">Ver produto</button>
-      </div>
-    `).join("");
-  }
-
-  // ✅ detalhes (igual antigo)
-  function openDetail(id){
-    const p = produtos.find(x=>x.id===id);
-    if(!p) return;
-    currentProductId = id;
-
-    document.getElementById("detailTitle").innerText = "📦 " + p.nome;
-    document.getElementById("detailOld").innerText = fmt(p.old);
-    document.getElementById("detailPrice").innerText = fmt(p.price);
-    document.getElementById("detailDesc").innerHTML = DEFAULT_DESC.map(t => `• ${t}`).join("<br>");
-
-    document.getElementById("detailBg").classList.add("show");
-  }
-  function closeDetail(){ document.getElementById("detailBg").classList.remove("show"); }
-
-  // carrinho
-  function cartAdd(id, q){
-    const it = cart.find(x=>x.id===id);
-    if(it) it.qty += q;
-    else cart.push({id, qty:q});
-    cart = cart.filter(x=>x.qty>0);
-    saveCart();
-  }
-  function cartMinus(id){
-    const it = cart.find(x=>x.id===id);
-    if(!it) return;
-    it.qty -= 1;
-    if(it.qty<=0) cart = cart.filter(x=>x.id!==id);
-    saveCart();
-    renderCart();
-  }
-  function cartPlus(id){ cartAdd(id,1); renderCart(); }
-  function cartRemove(id){ cart = cart.filter(x=>x.id!==id); saveCart(); renderCart(); }
-
-  function detailAddToCart(){
-    if(!currentProductId) return;
-    cartAdd(currentProductId, 1);
-    closeDetail();
-    openCart();
-  }
-
-  function openCart(){ renderCart(); document.getElementById("cartBg").classList.add("show"); }
-  function closeCart(){ document.getElementById("cartBg").classList.remove("show"); }
-
-  function renderCart(){
-    const box=document.getElementById("cartList");
-    if(cart.length===0){
-      box.innerHTML = `<div class="hint">Carrinho vazio.</div>`;
-      document.getElementById("cartTotal").innerText = fmt(0);
-      return;
-    }
-    let total=0;
-    box.innerHTML = cart.map(ci=>{
-      const p = produtos.find(x=>x.id===ci.id);
-      const sub = p.price * ci.qty;
-      total += sub;
-      return `
-        <div class="cartItem">
-          <div>
-            <b>${p.nome}</b><br>
-            <small style="opacity:.85;font-weight:900">${ci.qty}x • Subtotal: ${fmt(sub)}</small>
-
-            <!-- ✅ botão "Ver produto" dentro do carrinho -->
-            <div class="miniBtns" style="justify-content:flex-start;margin-top:8px;">
-              <button class="miniBtn" onclick="openDetail('${ci.id}')">👁</button>
-            </div>
-          </div>
-
-          <div class="miniBtns">
-            <button class="miniBtn" onclick="cartMinus('${ci.id}')">−</button>
-            <button class="miniBtn" onclick="cartPlus('${ci.id}')">+</button>
-            <button class="removeBtn" onclick="cartRemove('${ci.id}')">Remover</button>
-          </div>
-        </div>
-      `;
-    }).join("");
-    document.getElementById("cartTotal").innerText = fmt(total);
-  }
-
-  // pesquisa
-  function openSearch(){
-    document.getElementById("searchBg").classList.add("show");
-    const inp=document.getElementById("searchInput");
-    inp.value=""; inp.focus();
-    filtered=[...produtos]; render();
-  }
-  function closeSearch(){ document.getElementById("searchBg").classList.remove("show"); }
-  function doSearch(){
-    const q=(document.getElementById("searchInput").value||"").trim().toUpperCase();
-    filtered = !q ? [...produtos] : produtos.filter(p=> p.tag.includes(q) || p.nome.toUpperCase().includes(q));
-    render();
-  }
-
-  // ✅ email simples (pra compras)
-  function getEmail(){
-    let email = localStorage.getItem("jn_email") || "";
-    if(!email){
-      email = prompt("Digite seu e-mail (para ver suas compras):") || "";
-      email = email.trim().toLowerCase();
-      if(email) localStorage.setItem("jn_email", email);
-    }
-    return email;
-  }
-
-  // ✅ 📥 compras (quem não comprou não aparece nada)
-  async function openPurchases(){
-    document.getElementById("buyBg").classList.add("show");
-    const email = getEmail();
-    const hint = document.getElementById("buyHint");
-    const list = document.getElementById("buyList");
-
-    if(!email){
-      hint.innerText = "VOCÊ NÃO TEM NENHUM ITEM COMPRADO";
-      list.innerHTML = "";
-      return;
-    }
-
-    hint.innerText = "Carregando...";
-
-    try{
-      // seu bot deve retornar: { ok:true, items:[{product:"BRP1", delivered:true}] }
-      const r = await fetch(`${API_BASE}/api/my-purchases?email=${encodeURIComponent(email)}`);
-      const d = await r.json();
-
-      if(!d.ok || !d.items || d.items.length===0){
-        hint.innerText = "VOCÊ NÃO TEM NENHUM ITEM COMPRADO";
-        list.innerHTML = "";
-        return;
-      }
-
-      hint.innerText = `Você comprou ${d.items.length} item(ns).`;
-      list.innerHTML = d.items.map(it=>{
-        const p = produtos.find(x=>x.id===it.product) || {nome: it.product, id: it.product};
-        return `
-          <div class="cartItem">
-            <div>
-              <b>${p.nome}</b><br>
-              <small style="opacity:.85;font-weight:900">${it.delivered ? "✅ Liberado" : "⏳ Processando"}</small>
-            </div>
-            <div class="miniBtns">
-              <button class="miniBtn" onclick="openDetail('${p.id}')">👁</button>
-            </div>
-          </div>
-        `;
-      }).join("");
-
-    }catch{
-      hint.innerText = "Erro ao carregar compras.";
-      list.innerHTML = "";
-    }
-  }
-  function closePurchases(){ document.getElementById("buyBg").classList.remove("show"); }
-
-  // ✅ pagar agora (chama o bot pra gerar pagamento)
-  async function payNow(){
-    if(!currentProductId) return;
-
-    const email = getEmail();
-    if(!email) return alert("Digite seu e-mail para pagar.");
-
-    document.getElementById("pixBg").classList.add("show");
-    document.getElementById("pixBox").innerHTML = "Gerando pagamento...";
-    document.getElementById("openPayBtn").style.display="none";
-    document.getElementById("copyPixBtn").style.display="none";
-    document.getElementById("pixStatus").innerText="";
-
-    try{
-      // seu bot deve criar pagamento e retornar { ok:true, pay_url:"...", pix_code:"...", qr_image:"..." }
-      const res = await fetch(`${API_BASE}/api/create-payment`,{
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ product: currentProductId, email })
-      });
-      const data = await res.json();
-      if(!data.ok) return alert("Erro ao gerar pagamento.");
-
-      lastPayUrl = data.pay_url || "";
-      lastPixCode = data.pix_code || "";
-
-      let html = "";
-      if(data.qr_image){
-        html += `<img src="${data.qr_image}" alt="QR PIX" style="width:100%;max-width:260px;border-radius:12px;border:1px solid rgba(181,107,255,.25);background:#fff;">`;
-      }
-      if(lastPixCode){
-        html += `<div style="margin-top:10px;word-break:break-all;">${lastPixCode}</div>`;
-      }
-      document.getElementById("pixBox").innerHTML = html || "Pagamento criado. Use o botão abaixo.";
-
-      if(lastPayUrl) document.getElementById("openPayBtn").style.display="block";
-      if(lastPixCode) document.getElementById("copyPixBtn").style.display="block";
-
-      document.getElementById("pixStatus").innerText = "Após pagar, abra o 📥 para ver suas compras.";
-
-    }catch{
-      alert("Erro de conexão com o bot.");
-      closePix();
-    }
-  }
-
-  function closePix(){ document.getElementById("pixBg").classList.remove("show"); }
-  function openPayLink(){ if(lastPayUrl) window.open(lastPayUrl,"_blank"); }
-  async function copyPix(){
-    try{
-      await navigator.clipboard.writeText(lastPixCode||"");
-      alert("Código PIX copiado ✅");
-    }catch{
-      alert("Não deu pra copiar. Segura e copia manualmente.");
-    }
-  }
-
-  // expõe
-  window.openSearch=openSearch;
-  window.closeSearch=closeSearch;
-  window.doSearch=doSearch;
-
-  window.openCart=openCart;
-  window.closeCart=closeCart;
-  window.cartMinus=cartMinus;
-  w
 render();
+
+/* CHUVISCO */
+function createRain(){
+  const r=document.createElement("div");
+  r.className="rain";
+  r.style.left=Math.random()*100+"vw";
+  r.style.animationDuration=(Math.random()*2+2)+"s";
+  document.body.appendChild(r);
+  setTimeout(()=>r.remove(),5000);
+}
+setInterval(createRain,120);
+
 </script>
 
 </body>
